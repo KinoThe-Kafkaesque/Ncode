@@ -45,7 +45,7 @@ describe('openAICompatInferenceReceiptReplay', () => {
       JSON.stringify({
         type: 'init',
         data: {
-          model: '/data/models/hf/moonshotai__Kimi-K2.6',
+          model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
           max_tokens: 32000,
           reasoning_effort: 'none',
           tools: [
@@ -83,7 +83,7 @@ describe('openAICompatInferenceReceiptReplay', () => {
       parsed.receipts[0]!,
     )
     expect(params).toMatchObject({
-      model: '/data/models/hf/moonshotai__Kimi-K2.6',
+      model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
       stream: true,
       max_tokens: 32000,
       thinking: { type: 'disabled' },
@@ -101,7 +101,7 @@ describe('openAICompatInferenceReceiptReplay', () => {
         JSON.stringify({
           type: 'init',
           data: {
-            model: '/data/models/hf/moonshotai__Kimi-K2.6',
+            model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
             max_tokens: 32000,
             max_completion_tokens: 32000,
             stream: true,
@@ -156,7 +156,7 @@ describe('openAICompatInferenceReceiptReplay', () => {
       ),
     ).toEqual({
       source_path: '/tmp/request-shape.jsonl',
-      model: '/data/models/hf/moonshotai__Kimi-K2.6',
+      model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
       max_tokens: 32000,
       max_completion_tokens: 32000,
       stream: true,
@@ -183,7 +183,7 @@ describe('openAICompatInferenceReceiptReplay', () => {
     const fixture = loadFixture('tool-call.response.json')
 
     const replay = await collectOpenAICompatReplayEvents(fixture, {
-      model: '/data/models/hf/moonshotai__Kimi-K2.6',
+      model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
       stream: true,
       max_tokens: 64,
       messages: [{ role: 'user', content: 'hello' }],
@@ -249,7 +249,7 @@ describe('openAICompatInferenceReceiptReplay', () => {
 
     await expect(
       collectOpenAICompatReplayEvents(fixture, {
-        model: '/data/models/hf/moonshotai__Kimi-K2.6',
+        model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
         stream: true,
         max_tokens: 64,
         messages: [{ role: 'user', content: 'hello' }],
@@ -262,7 +262,7 @@ describe('openAICompatInferenceReceiptReplay', () => {
     const fixture = loadFixture('reasoning-tail-leak.response.json')
 
     const replay = await collectOpenAICompatReplayEvents(fixture, {
-      model: '/data/models/hf/moonshotai__Kimi-K2.6',
+      model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
       stream: true,
       max_tokens: 64,
       messages: [{ role: 'user', content: 'hello' }],
@@ -326,7 +326,7 @@ describe('openAICompatInferenceReceiptReplay', () => {
 
     await expect(
       collectOpenAICompatReplayEvents(fixture, {
-        model: '/data/models/hf/moonshotai__Kimi-K2.6',
+        model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
         stream: true,
         max_tokens: 64,
         messages: [{ role: 'user', content: 'hello' }],

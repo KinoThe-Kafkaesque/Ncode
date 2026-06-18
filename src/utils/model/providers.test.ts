@@ -43,14 +43,14 @@ describe('providers', () => {
     process.env.NOUMENA_BASE_URL = 'http://127.0.0.1:18000'
     expect(isFirstPartyNoumenaBaseUrl()).toBe(false)
 
-    process.env.NOUMENA_BASE_URL = 'http://95.133.253.252'
+    process.env.NOUMENA_BASE_URL = 'http://internal-gateway.invalid'
     expect(isFirstPartyNoumenaBaseUrl()).toBe(false)
 
     process.env.NOUMENA_BASE_URL = 'https://code.dev.noumena.test'
     expect(isFirstPartyNoumenaBaseUrl()).toBe(false)
 
     process.env.NOUMENA_BASE_URL =
-      'https://kimi-k25-sglang-gateway.noumena-onecc-mk8s01.clusters.gpus.com'
+      'https://internal-override.invalid'
     expect(isFirstPartyNoumenaBaseUrl()).toBe(false)
 
     delete process.env.NOUMENA_BASE_URL

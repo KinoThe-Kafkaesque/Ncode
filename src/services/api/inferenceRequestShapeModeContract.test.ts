@@ -16,7 +16,7 @@ import {
   setSessionSettingsCache,
 } from 'src/utils/settings/settingsCache.js'
 
-const MODEL = '/data/models/hf/moonshotai__Kimi-K2.6'
+const MODEL = '/data/models/hf/moonshotai__Kimi-K2.7-Code'
 
 const envKeys = [
   'NCODE_BUILD_MODE',

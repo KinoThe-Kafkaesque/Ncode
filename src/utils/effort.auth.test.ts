@@ -7,7 +7,7 @@ import {
   modelSupportsMaxEffort,
   resolveAppliedEffort,
 } from './effort.js'
-import { KIMI_K2_6_MODEL } from './model/ncodeModels.js'
+import { KIMI_2_7_CODER_MODEL } from './model/ncodeModels.js'
 
 function makeSession(
   overrides: Partial<ResolvedAuthSession>,
@@ -103,10 +103,10 @@ describe('effort auth gating', () => {
     process.env.NCODE_BUILD_MODE = 'noumena'
     delete process.env.USER_TYPE
 
-    expect(modelSupportsEffort(KIMI_K2_6_MODEL)).toBe(true)
-    expect(modelSupportsMaxEffort(KIMI_K2_6_MODEL)).toBe(false)
-    expect(getDefaultEffortForModel(KIMI_K2_6_MODEL)).toBe('high')
-    expect(resolveAppliedEffort(KIMI_K2_6_MODEL, 'max')).toBe('high')
+    expect(modelSupportsEffort(KIMI_2_7_CODER_MODEL)).toBe(true)
+    expect(modelSupportsMaxEffort(KIMI_2_7_CODER_MODEL)).toBe(false)
+    expect(getDefaultEffortForModel(KIMI_2_7_CODER_MODEL)).toBe('high')
+    expect(resolveAppliedEffort(KIMI_2_7_CODER_MODEL, 'max')).toBe('high')
   })
 
   it('defaults opus 4.6 to medium for pro oauth-backed sessions', () => {

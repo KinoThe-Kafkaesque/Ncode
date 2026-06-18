@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { getContextWindowForModel, getModelMaxOutputTokens } from './context.js'
 import {
-  KIMI_K2_6_MODEL,
+  KIMI_2_7_CODER_MODEL,
   NCODE_MANAGED_MODEL_MAX_PROMPT_TOKENS,
   NCODE_MANAGED_MODEL_MAX_SEQUENCE_TOKENS,
   NCODE_MANAGED_MODEL_MAX_TOKENS,
@@ -9,8 +9,8 @@ import {
 
 describe('NCode managed model token contracts', () => {
   test.each([
-    ['k2.6 alias', 'k2.6'],
-    ['k2.6 model', KIMI_K2_6_MODEL],
+    ['kimi-2.7-coder alias', 'kimi-2.7-coder'],
+    ['kimi-2.7-coder model', KIMI_2_7_CODER_MODEL],
   ])('%s uses the managed prompt and sequence token contract', (_label, model) => {
     expect(getContextWindowForModel(model)).toBe(
       NCODE_MANAGED_MODEL_MAX_PROMPT_TOKENS,

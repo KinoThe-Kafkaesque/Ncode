@@ -5,10 +5,10 @@ describe('normalizePtyVisibleText', () => {
   test('removes private-mode keyboard and terminal identity queries from PTY output', () => {
     const raw =
       '\x1b[>1u\x1b[>4;2m\x1b[>0q' +
-      '◉ /data/models/hf/moonshotai__Kimi-K2.6 · high  ⌂ /mlstore/src/noumena/ncode/code'
+      '◉ /data/models/hf/moonshotai__Kimi-K2.7-Code · high  ⌂ /mlstore/src/noumena/ncode/code'
 
     expect(normalizePtyVisibleText(raw)).toBe(
-      '◉ /data/models/hf/moonshotai__Kimi-K2.6 · high  ⌂ /mlstore/src/noumena/ncode/code',
+      '◉ /data/models/hf/moonshotai__Kimi-K2.7-Code · high  ⌂ /mlstore/src/noumena/ncode/code',
     )
   })
 

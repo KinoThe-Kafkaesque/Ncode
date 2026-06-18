@@ -146,7 +146,7 @@ describe('oauth URL helpers', () => {
       'https://code.noumena.com/oauth/authorize',
     )
     expect(oauth.getOauthTokenUrl()).toBe(
-      'https://api.noumena.com/v1/oauth/token',
+      'https://api.noumena.com/oauth/token',
     )
     expect(oauth.getOauthManualRedirectUrl()).toBe(
       'https://code.noumena.com/oauth/code/callback',

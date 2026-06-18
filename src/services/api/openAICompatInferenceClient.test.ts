@@ -321,7 +321,7 @@ describe('buildOpenAICompatChatRequest', () => {
     )
     const policy = resolveOpenAICompatRequestPolicy(
       {
-        model: '/data/models/hf/moonshotai__Kimi-K2.5',
+        model: KIMI_2_7_CODER_MODEL,
         max_tokens: 64,
         thinking: { type: 'enabled', budget_tokens: 1024 },
         messages: [{ role: 'user', content: 'hello' }],
@@ -336,7 +336,7 @@ describe('buildOpenAICompatChatRequest', () => {
 
     const request = buildOpenAICompatChatRequest(
       {
-        model: '/data/models/hf/moonshotai__Kimi-K2.5',
+        model: KIMI_2_7_CODER_MODEL,
         max_tokens: 64,
         thinking: { type: 'enabled', budget_tokens: 1024 },
         messages: [{ role: 'user', content: 'hello' }],
@@ -357,7 +357,7 @@ describe('buildOpenAICompatChatRequest', () => {
   it('keeps reasoning enabled for Kimi models on safe backends', () => {
     const policy = resolveOpenAICompatRequestPolicy(
       {
-        model: '/data/models/hf/moonshotai__Kimi-K2.5',
+        model: KIMI_2_7_CODER_MODEL,
         max_tokens: 64,
         thinking: { type: 'enabled', budget_tokens: 1024 },
         messages: [{ role: 'user', content: 'hello' }],
@@ -369,7 +369,7 @@ describe('buildOpenAICompatChatRequest', () => {
 
     const request = buildOpenAICompatChatRequest(
       {
-        model: '/data/models/hf/moonshotai__Kimi-K2.5',
+        model: KIMI_2_7_CODER_MODEL,
         max_tokens: 64,
         thinking: { type: 'enabled', budget_tokens: 1024 },
         messages: [{ role: 'user', content: 'hello' }],
@@ -1469,13 +1469,13 @@ describe('OpenAICompatInferenceClient', () => {
   it('routes chat completions by the actual request model, not the stale client model', async () => {
     const fetchCalls: Array<string> = []
     const client = new OpenAICompatInferenceClient({
-      baseURL: 'http://95.133.253.252',
+      baseURL: 'https://api.noumena.com',
       fetch: async (input, _init) => {
         fetchCalls.push(String(input))
         return new Response(
           JSON.stringify({
             id: 'chatcmpl-route',
-            model: '/data/models/hf/moonshotai__Kimi-K2.6',
+            model: KIMI_2_7_CODER_MODEL,
             choices: [
               {
                 message: {
@@ -1491,13 +1491,13 @@ describe('OpenAICompatInferenceClient', () => {
     })
 
     await client.createMessage({
-      model: '/data/models/hf/moonshotai__Kimi-K2.6',
+      model: KIMI_2_7_CODER_MODEL,
       max_tokens: 8,
       messages: [{ role: 'user', content: 'route' }],
     } as never)
 
     expect(fetchCalls).toEqual([
-      'http://95.133.253.252/v1/chat/completions',
+      'https://api.noumena.com/v1/chat/completions',
     ])
   })
 
@@ -1543,7 +1543,7 @@ describe('OpenAICompatInferenceClient', () => {
     const events = [
       sseData({
         id: 'chatcmpl-kimi',
-        model: '/data/models/hf/moonshotai__Kimi-K2.5',
+        model: KIMI_2_7_CODER_MODEL,
         choices: [
           {
             index: 0,
@@ -1558,12 +1558,12 @@ describe('OpenAICompatInferenceClient', () => {
       }),
       sseData({
         id: 'chatcmpl-kimi',
-        model: '/data/models/hf/moonshotai__Kimi-K2.5',
+        model: KIMI_2_7_CODER_MODEL,
         choices: [{ index: 0, delta: {}, finish_reason: 'stop' }],
       }),
       sseData({
         id: 'chatcmpl-kimi',
-        model: '/data/models/hf/moonshotai__Kimi-K2.5',
+        model: KIMI_2_7_CODER_MODEL,
         choices: [],
         usage: {
           prompt_tokens: 12,
@@ -1585,7 +1585,7 @@ describe('OpenAICompatInferenceClient', () => {
 
     const client = new OpenAICompatInferenceClient({
       baseURL:
-        'https://kimi-k25-sglang-gateway.noumena-onecc-mk8s01.clusters.gpus.com',
+        'https://internal-gateway.invalid',
       backendCapabilities: { reasoningTransport: 'unsafe_visible_content' },
       fetch: async (input, init) => {
         fetchCalls.push({ url: String(input), init })
@@ -1596,7 +1596,7 @@ describe('OpenAICompatInferenceClient', () => {
     })
 
     const operation = client.createMessage({
-      model: '/data/models/hf/moonshotai__Kimi-K2.5',
+      model: KIMI_2_7_CODER_MODEL,
       stream: true,
       max_tokens: 64,
       thinking: { type: 'enabled', budget_tokens: 1024 },
@@ -1640,7 +1640,7 @@ describe('OpenAICompatInferenceClient', () => {
     const events = [
       sseData({
         id: 'chatcmpl-disabled-stream',
-        model: '/data/models/hf/moonshotai__Kimi-K2.5',
+        model: KIMI_2_7_CODER_MODEL,
         choices: [
           {
             index: 0,
@@ -1651,7 +1651,7 @@ describe('OpenAICompatInferenceClient', () => {
       }),
       sseData({
         id: 'chatcmpl-disabled-stream',
-        model: '/data/models/hf/moonshotai__Kimi-K2.5',
+        model: KIMI_2_7_CODER_MODEL,
         choices: [
           {
             index: 0,
@@ -1662,12 +1662,12 @@ describe('OpenAICompatInferenceClient', () => {
       }),
       sseData({
         id: 'chatcmpl-disabled-stream',
-        model: '/data/models/hf/moonshotai__Kimi-K2.5',
+        model: KIMI_2_7_CODER_MODEL,
         choices: [{ index: 0, delta: {}, finish_reason: 'stop' }],
       }),
       sseData({
         id: 'chatcmpl-disabled-stream',
-        model: '/data/models/hf/moonshotai__Kimi-K2.5',
+        model: KIMI_2_7_CODER_MODEL,
         choices: [],
         usage: {
           prompt_tokens: 12,
@@ -1688,7 +1688,7 @@ describe('OpenAICompatInferenceClient', () => {
 
     const client = new OpenAICompatInferenceClient({
       baseURL:
-        'https://kimi-k25-sglang-gateway.noumena-onecc-mk8s01.clusters.gpus.com',
+        'https://internal-gateway.invalid',
       backendCapabilities: { reasoningTransport: 'unsafe_visible_content' },
       fetch: async () =>
         new Response(stream, {
@@ -1697,7 +1697,7 @@ describe('OpenAICompatInferenceClient', () => {
     })
 
     const operation = client.createMessage({
-      model: '/data/models/hf/moonshotai__Kimi-K2.5',
+      model: KIMI_2_7_CODER_MODEL,
       stream: true,
       max_tokens: 64,
       thinking: { type: 'enabled', budget_tokens: 1024 },
@@ -1732,7 +1732,7 @@ describe('OpenAICompatInferenceClient', () => {
     const events = [
       sseData({
         id: 'chatcmpl-think-marker-stream',
-        model: '/data/models/hf/moonshotai__Kimi-K2.6',
+        model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
         choices: [
           {
             index: 0,
@@ -1743,7 +1743,7 @@ describe('OpenAICompatInferenceClient', () => {
       }),
       sseData({
         id: 'chatcmpl-think-marker-stream',
-        model: '/data/models/hf/moonshotai__Kimi-K2.6',
+        model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
         choices: [
           {
             index: 0,
@@ -1754,7 +1754,7 @@ describe('OpenAICompatInferenceClient', () => {
       }),
       sseData({
         id: 'chatcmpl-think-marker-stream',
-        model: '/data/models/hf/moonshotai__Kimi-K2.6',
+        model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
         choices: [
           {
             index: 0,
@@ -1765,12 +1765,12 @@ describe('OpenAICompatInferenceClient', () => {
       }),
       sseData({
         id: 'chatcmpl-think-marker-stream',
-        model: '/data/models/hf/moonshotai__Kimi-K2.6',
+        model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
         choices: [{ index: 0, delta: {}, finish_reason: 'stop' }],
       }),
       sseData({
         id: 'chatcmpl-think-marker-stream',
-        model: '/data/models/hf/moonshotai__Kimi-K2.6',
+        model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
         choices: [],
         usage: {
           prompt_tokens: 12,
@@ -1798,7 +1798,7 @@ describe('OpenAICompatInferenceClient', () => {
     })
 
     const operation = client.createMessage({
-      model: '/data/models/hf/moonshotai__Kimi-K2.6',
+      model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
       stream: true,
       max_tokens: 64,
       messages: [{ role: 'user', content: 'hello' }],
@@ -1835,7 +1835,7 @@ describe('OpenAICompatInferenceClient', () => {
     const events = [
       sseData({
         id: 'chatcmpl-dup-tail',
-        model: '/data/models/hf/moonshotai__Kimi-K2.6',
+        model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
         choices: [
           {
             index: 0,
@@ -1846,7 +1846,7 @@ describe('OpenAICompatInferenceClient', () => {
       }),
       sseData({
         id: 'chatcmpl-dup-tail',
-        model: '/data/models/hf/moonshotai__Kimi-K2.6',
+        model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
         choices: [
           {
             index: 0,
@@ -1857,7 +1857,7 @@ describe('OpenAICompatInferenceClient', () => {
       }),
       sseData({
         id: 'chatcmpl-dup-tail',
-        model: '/data/models/hf/moonshotai__Kimi-K2.6',
+        model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
         choices: [
           {
             index: 0,
@@ -1868,7 +1868,7 @@ describe('OpenAICompatInferenceClient', () => {
       }),
       sseData({
         id: 'chatcmpl-dup-tail',
-        model: '/data/models/hf/moonshotai__Kimi-K2.6',
+        model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
         choices: [
           {
             index: 0,
@@ -1879,12 +1879,12 @@ describe('OpenAICompatInferenceClient', () => {
       }),
       sseData({
         id: 'chatcmpl-dup-tail',
-        model: '/data/models/hf/moonshotai__Kimi-K2.6',
+        model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
         choices: [{ index: 0, delta: {}, finish_reason: 'stop' }],
       }),
       sseData({
         id: 'chatcmpl-dup-tail',
-        model: '/data/models/hf/moonshotai__Kimi-K2.6',
+        model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
         choices: [],
         usage: {
           prompt_tokens: 12,
@@ -1912,7 +1912,7 @@ describe('OpenAICompatInferenceClient', () => {
     })
 
     const operation = client.createMessage({
-      model: '/data/models/hf/moonshotai__Kimi-K2.6',
+      model: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
       stream: true,
       max_tokens: 64,
       messages: [{ role: 'user', content: 'hello' }],

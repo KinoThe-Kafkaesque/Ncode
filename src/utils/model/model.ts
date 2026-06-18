@@ -225,6 +225,11 @@ export function getDefaultMainLoopModelSetting(): ModelName | ModelAlias {
     )
   }
 
+  // Noumena-managed first-party sessions default to Kimi K2.7 Coder.
+  if (getAPIProvider() === 'firstParty') {
+    return 'kimi-2.7-coder'
+  }
+
   const session = getCurrentSubscriptionSessionState()
 
   // Max users get Opus as default

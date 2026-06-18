@@ -14,7 +14,7 @@ function createToolUseContext(toolNames: string[]) {
     options: {
       commands: [],
       debug: false,
-      mainLoopModel: '/data/models/hf/moonshotai__Kimi-K2.6',
+      mainLoopModel: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
       tools: toolNames.map(name => ({ name, userFacingName: () => name })) as never,
       verbose: false,
       thinkingConfig: {} as never,

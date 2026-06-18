@@ -189,7 +189,7 @@ function createToolUseContext(
     options: {
       commands: [],
       debug: false,
-      mainLoopModel: '/data/models/hf/moonshotai__Kimi-K2.6',
+      mainLoopModel: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
       tools: [SkillTool] as never,
       verbose: false,
       thinkingConfig: {} as never,
@@ -384,7 +384,7 @@ describe('SkillTool runtime contract', () => {
       modifiedContext.getAppState().toolPermissionContext.alwaysAllowRules.command,
     ).toEqual(['Bash', 'Read'])
     expect(modifiedContext.options.mainLoopModel).toBe(
-      'resolved:opus:/data/models/hf/moonshotai__Kimi-K2.6',
+      'resolved:opus:/data/models/hf/moonshotai__Kimi-K2.7-Code',
     )
     expect(modifiedContext.getAppState().effortValue).toBe('high')
   })
