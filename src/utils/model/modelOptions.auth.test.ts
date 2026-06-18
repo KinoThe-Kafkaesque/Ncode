@@ -8,7 +8,6 @@ import {
 import { parseUserSpecifiedModel } from './model.js'
 import {
   KIMI_2_7_CODER_MODEL,
-  KIMI_K2_6_MODEL,
 } from './ncodeModels.js'
 
 const originalEntryPoint = process.env.CLAUDE_CODE_ENTRYPOINT
@@ -153,7 +152,7 @@ describe('modelOptions auth gating', () => {
       expect(parseUserSpecifiedModel('Kimi 2.7 Coder')).toBe(
         KIMI_2_7_CODER_MODEL,
       )
-      expect(parseUserSpecifiedModel('k2.6')).toBe(KIMI_K2_6_MODEL)
+      expect(parseUserSpecifiedModel('k2.7')).toBe(KIMI_2_7_CODER_MODEL)
     })
   })
 

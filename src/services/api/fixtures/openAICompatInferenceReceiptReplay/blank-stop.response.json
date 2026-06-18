@@ -12,7 +12,7 @@
           "id": "chatcmpl-3ad31ac4-b601-4fd4-be26-6f0e9c36edfc",
           "object": "chat.completion.chunk",
           "created": 1776854395,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -30,7 +30,7 @@
           "id": "chatcmpl-3ad31ac4-b601-4fd4-be26-6f0e9c36edfc",
           "object": "chat.completion.chunk",
           "created": 1776854395,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -48,7 +48,7 @@
           "id": "chatcmpl-3ad31ac4-b601-4fd4-be26-6f0e9c36edfc",
           "object": "chat.completion.chunk",
           "created": 1776854395,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [],
           "usage": {

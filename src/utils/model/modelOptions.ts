@@ -309,6 +309,7 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
         premiumOptions.push(getMaxSonnet46_1MOption())
       }
 
+      premiumOptions.push(...getNCodeManagedModelOptions())
       premiumOptions.push(MaxHaiku45Option)
       return premiumOptions
     }
@@ -328,13 +329,15 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
       }
     }
 
+    standardOptions.push(...getNCodeManagedModelOptions())
     standardOptions.push(MaxHaiku45Option)
     return standardOptions
   }
 
-  // PAYG 1P API: Default (Sonnet) + Sonnet 1M + Opus 4.6 + Opus 1M + Haiku
+  // PAYG 1P API: Kimi default + Sonnet + Opus + Haiku
   if (getAPIProvider() === 'firstParty') {
     const payg1POptions = [getDefaultOptionForUser(fastMode)]
+    payg1POptions.push(...getNCodeManagedModelOptions())
     if (checkSonnet1mAccess()) {
       payg1POptions.push(getSonnet46_1MOption())
     }

@@ -7,8 +7,8 @@ import { OpenAICompatInferenceClient } from './openAICompatInferenceClient.js'
 import { enableConfigs } from '../../utils/config.js'
 import { getClaudeAIOAuthTokens } from '../../utils/auth.js'
 import {
-  KIMI_K2_6_BASE_URL,
-  KIMI_K2_6_MODEL,
+  KIMI_2_7_CODER_BASE_URL,
+  KIMI_2_7_CODER_MODEL,
 } from '../../utils/model/ncodeModels.js'
 
 type FetchOverride = NonNullable<
@@ -173,14 +173,14 @@ describe('getInferenceClient', () => {
     expect(request.headers.get('x-claude-code-session-id')).toBeTruthy()
   })
 
-  it('routes managed K2.6 to the Prime serving edge', async () => {
+  it('routes managed Kimi 2.7 Coder to the Noumena inference edge', async () => {
     process.env.NOUMENA_BASE_URL = 'https://wrong-default.example.test'
     const recorder = createModelsFetchRecorder()
 
     const client = await getInferenceClient({
       maxRetries: 3,
-      source: 'k2.6',
-      model: KIMI_K2_6_MODEL,
+      source: 'kimi-2.7-coder',
+      model: KIMI_2_7_CODER_MODEL,
       fetchOverride: recorder.fetchOverride,
     })
 
@@ -188,7 +188,7 @@ describe('getInferenceClient', () => {
     expect(await collectModels(client as OpenAICompatInferenceClient)).toEqual([
       { id: 'test-model' },
     ])
-    expect(recorder.getRequest().url).toBe(`${KIMI_K2_6_BASE_URL}/v1/models`)
+    expect(recorder.getRequest().url).toBe(`${KIMI_2_7_CODER_BASE_URL}/v1/models`)
   })
 
   it('supports non-first-party ANTHROPIC_BASE_URL as a legacy compatibility alias', async () => {

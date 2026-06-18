@@ -5,14 +5,14 @@ import {
   getEffectiveContextWindowSize,
 } from './autoCompact.js'
 import {
-  KIMI_K2_6_MODEL,
+  KIMI_2_7_CODER_MODEL,
   NCODE_MANAGED_MODEL_MAX_PROMPT_TOKENS,
 } from '../../utils/model/ncodeModels.js'
 
 describe('auto compact managed model prompt budgets', () => {
   test.each([
-    ['k2.6 alias', 'k2.6'],
-    ['k2.6 model', KIMI_K2_6_MODEL],
+    ['kimi-2.7-coder alias', 'kimi-2.7-coder'],
+    ['kimi-2.7-coder model', KIMI_2_7_CODER_MODEL],
   ])(
     '%s treats the managed context window as an input prompt budget',
     (_label, model) => {

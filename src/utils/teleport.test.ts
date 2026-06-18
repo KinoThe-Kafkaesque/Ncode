@@ -63,36 +63,36 @@ describe('buildInitialRemoteControlEvents', () => {
 
 describe('getRemoteSessionEnvironmentVariables', () => {
   it('inherits managed routing env vars from the current process', () => {
-    process.env.NOUMENA_BASE_URL = 'http://95.133.253.252'
-    process.env.NOUMENA_MODEL = '/data/models/hf/moonshotai__Kimi-K2.6'
+    process.env.NOUMENA_BASE_URL = 'http://internal-gateway.invalid'
+    process.env.NOUMENA_MODEL = '/data/models/hf/moonshotai__Kimi-K2.7-Code'
     process.env.CLAUDE_CODE_USE_VERTEX = '1'
     process.env.UNRELATED_REMOTE_TEST_ENV = 'ignored'
 
     expect(getRemoteSessionEnvironmentVariables()).toEqual({
-      NOUMENA_BASE_URL: 'http://95.133.253.252',
-      NOUMENA_MODEL: '/data/models/hf/moonshotai__Kimi-K2.6',
+      NOUMENA_BASE_URL: 'http://internal-gateway.invalid',
+      NOUMENA_MODEL: '/data/models/hf/moonshotai__Kimi-K2.7-Code',
       CLAUDE_CODE_USE_VERTEX: '1',
     })
   })
 
   it('lets explicit overrides replace inherited values', () => {
-    process.env.NOUMENA_BASE_URL = 'http://95.133.253.252'
+    process.env.NOUMENA_BASE_URL = 'http://internal-gateway.invalid'
     process.env.CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST = '1'
 
     expect(
       getRemoteSessionEnvironmentVariables({
         NOUMENA_BASE_URL:
-          'https://kimi-k25-sglang-gateway.noumena-onecc-mk8s01.clusters.gpus.com',
+          'https://internal-override.invalid',
       }),
     ).toMatchObject({
       CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST: '1',
       NOUMENA_BASE_URL:
-        'https://kimi-k25-sglang-gateway.noumena-onecc-mk8s01.clusters.gpus.com',
+        'https://internal-override.invalid',
     })
   })
 
   it('uses direct provider routing for remote BYOK sessions', () => {
-    process.env.NOUMENA_BASE_URL = 'http://95.133.253.252'
+    process.env.NOUMENA_BASE_URL = 'http://internal-gateway.invalid'
     process.env.NOUMENA_MODEL = 'opus'
 
     expect(

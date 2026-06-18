@@ -12,7 +12,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -30,7 +30,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -58,7 +58,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -84,7 +84,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -110,7 +110,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -136,7 +136,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -162,7 +162,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -188,7 +188,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -214,7 +214,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -240,7 +240,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -266,7 +266,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -292,7 +292,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -318,7 +318,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -344,7 +344,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -370,7 +370,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -396,7 +396,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -422,7 +422,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -448,7 +448,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -474,7 +474,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -500,7 +500,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -526,7 +526,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -552,7 +552,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -578,7 +578,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -604,7 +604,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -630,7 +630,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -656,7 +656,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -682,7 +682,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -708,7 +708,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -734,7 +734,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -760,7 +760,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -786,7 +786,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -812,7 +812,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -838,7 +838,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -864,7 +864,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -890,7 +890,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -916,7 +916,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -942,7 +942,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -968,7 +968,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -994,7 +994,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1020,7 +1020,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1046,7 +1046,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1072,7 +1072,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1098,7 +1098,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1124,7 +1124,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1150,7 +1150,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1176,7 +1176,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1202,7 +1202,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1228,7 +1228,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1254,7 +1254,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1280,7 +1280,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1306,7 +1306,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1332,7 +1332,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1358,7 +1358,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1384,7 +1384,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1410,7 +1410,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1436,7 +1436,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1462,7 +1462,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1488,7 +1488,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1514,7 +1514,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1540,7 +1540,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1566,7 +1566,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1592,7 +1592,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1618,7 +1618,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1644,7 +1644,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1670,7 +1670,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1696,7 +1696,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1722,7 +1722,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1748,7 +1748,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1774,7 +1774,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1800,7 +1800,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1826,7 +1826,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1852,7 +1852,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1878,7 +1878,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1904,7 +1904,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1930,7 +1930,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1956,7 +1956,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -1982,7 +1982,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2008,7 +2008,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2034,7 +2034,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2060,7 +2060,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2086,7 +2086,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2112,7 +2112,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2138,7 +2138,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2164,7 +2164,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2190,7 +2190,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2216,7 +2216,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2242,7 +2242,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2268,7 +2268,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2294,7 +2294,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2320,7 +2320,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2346,7 +2346,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2372,7 +2372,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2398,7 +2398,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2424,7 +2424,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2450,7 +2450,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2476,7 +2476,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2502,7 +2502,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2528,7 +2528,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2554,7 +2554,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2580,7 +2580,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2606,7 +2606,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2632,7 +2632,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2658,7 +2658,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2684,7 +2684,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2710,7 +2710,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2736,7 +2736,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2762,7 +2762,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2788,7 +2788,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2814,7 +2814,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2840,7 +2840,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2866,7 +2866,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2892,7 +2892,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2918,7 +2918,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2944,7 +2944,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2970,7 +2970,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -2996,7 +2996,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3022,7 +3022,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3048,7 +3048,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3074,7 +3074,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3100,7 +3100,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3126,7 +3126,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3152,7 +3152,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3178,7 +3178,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3204,7 +3204,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3230,7 +3230,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3256,7 +3256,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3282,7 +3282,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3308,7 +3308,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3334,7 +3334,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3360,7 +3360,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3386,7 +3386,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3412,7 +3412,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3438,7 +3438,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3464,7 +3464,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3490,7 +3490,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3516,7 +3516,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3542,7 +3542,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3568,7 +3568,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3594,7 +3594,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3620,7 +3620,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3646,7 +3646,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3672,7 +3672,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3698,7 +3698,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3724,7 +3724,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3750,7 +3750,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3776,7 +3776,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3802,7 +3802,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3828,7 +3828,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3854,7 +3854,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3880,7 +3880,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3906,7 +3906,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3932,7 +3932,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3958,7 +3958,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -3984,7 +3984,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4010,7 +4010,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4036,7 +4036,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4062,7 +4062,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4088,7 +4088,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4114,7 +4114,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4140,7 +4140,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4166,7 +4166,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4192,7 +4192,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4218,7 +4218,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4244,7 +4244,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4270,7 +4270,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4296,7 +4296,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4322,7 +4322,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4348,7 +4348,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4374,7 +4374,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4400,7 +4400,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4426,7 +4426,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4452,7 +4452,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4478,7 +4478,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4504,7 +4504,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4530,7 +4530,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4556,7 +4556,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4582,7 +4582,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4608,7 +4608,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4634,7 +4634,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4660,7 +4660,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4686,7 +4686,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4712,7 +4712,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4738,7 +4738,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4764,7 +4764,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4790,7 +4790,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [
             {
@@ -4808,7 +4808,7 @@
           "id": "chatcmpl-03175b66-8205-4fc2-88c5-f3a0b2de7399",
           "object": "chat.completion.chunk",
           "created": 1776951345,
-          "model": "/data/models/hf/moonshotai__Kimi-K2.6",
+          "model": "/data/models/hf/moonshotai__Kimi-K2.7-Code",
           "system_fingerprint": "default",
           "choices": [],
           "usage": {

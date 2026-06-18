@@ -3,8 +3,6 @@ import { getAuthRuntime } from '../../auth/runtime/AuthRuntime.js'
 import type { ResolvedAuthSession } from '../../auth/runtime/types.js'
 import {
   getDefaultMainLoopModelSetting,
-  getDefaultOpusModel,
-  getDefaultFlashModel,
   isOpus1mMergeEnabled,
 } from './model.js'
 
@@ -15,6 +13,9 @@ const originalDisable1m = process.env.CLAUDE_CODE_DISABLE_1M_CONTEXT
 const originalUseBedrock = process.env.CLAUDE_CODE_USE_BEDROCK
 const originalUseVertex = process.env.CLAUDE_CODE_USE_VERTEX
 const originalUseFoundry = process.env.CLAUDE_CODE_USE_FOUNDRY
+const originalDefaultOpus = process.env.NOUMENA_DEFAULT_OPUS_MODEL
+const originalDefaultSonnet = process.env.NOUMENA_DEFAULT_SONNET_MODEL
+const originalDefaultHaiku = process.env.NOUMENA_DEFAULT_HAIKU_MODEL
 
 function restoreEnv(): void {
   if (originalEntryPoint === undefined) {
@@ -51,6 +52,21 @@ function restoreEnv(): void {
     delete process.env.CLAUDE_CODE_USE_FOUNDRY
   } else {
     process.env.CLAUDE_CODE_USE_FOUNDRY = originalUseFoundry
+  }
+  if (originalDefaultOpus === undefined) {
+    delete process.env.NOUMENA_DEFAULT_OPUS_MODEL
+  } else {
+    process.env.NOUMENA_DEFAULT_OPUS_MODEL = originalDefaultOpus
+  }
+  if (originalDefaultSonnet === undefined) {
+    delete process.env.NOUMENA_DEFAULT_SONNET_MODEL
+  } else {
+    process.env.NOUMENA_DEFAULT_SONNET_MODEL = originalDefaultSonnet
+  }
+  if (originalDefaultHaiku === undefined) {
+    delete process.env.NOUMENA_DEFAULT_HAIKU_MODEL
+  } else {
+    process.env.NOUMENA_DEFAULT_HAIKU_MODEL = originalDefaultHaiku
   }
 }
 
@@ -131,7 +147,7 @@ afterEach(() => {
 })
 
 describe('model auth session gating', () => {
-  it('defaults max sessions to opus with 1M context', () => {
+  it('defaults noumena-managed first-party sessions to kimi-2.7-coder', () => {
     process.env.CLAUDE_CODE_ENTRYPOINT = 'cli'
     process.env.USER_TYPE = 'test'
     delete process.env.NCODE_BUILD_MODE
@@ -156,9 +172,7 @@ describe('model auth session gating', () => {
     })
 
     withMockCurrentSession(session, () => {
-      expect(getDefaultMainLoopModelSetting()).toBe(
-        getDefaultOpusModel() + '[1m]',
-      )
+      expect(getDefaultMainLoopModelSetting()).toBe('kimi-2.7-coder')
     })
   })
 
@@ -213,7 +227,7 @@ describe('model auth session gating', () => {
 
     withMockCurrentSession(session, () => {
       expect(isOpus1mMergeEnabled()).toBe(true)
-      expect(getDefaultMainLoopModelSetting()).toBe(getDefaultFlashModel())
+      expect(getDefaultMainLoopModelSetting()).toBe('kimi-2.7-coder')
     })
   })
 })
