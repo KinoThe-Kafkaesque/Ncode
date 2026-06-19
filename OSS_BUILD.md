@@ -22,7 +22,7 @@ Build from source if you are on:
 ## Requirements
 
 - [Bun](https://bun.sh) 1.3.10 or newer
-- [Rust](https://rustup.rs) with `cargo` available on `PATH`
+- [Rust](https://rustup.rs) 1.80 or newer (with `cargo` on `PATH`)
 - `curl` or `wget` (only for the install helper)
 
 You do not need the rest of the Noumena monorepo or Sapling/Buck2.

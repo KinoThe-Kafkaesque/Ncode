@@ -54,7 +54,7 @@ Build requirements:
 
 - Node.js 18 or newer
 - Bun 1.3.10 or newer
-- Rust and Cargo
+- Rust 1.80 or newer (with `cargo` on `PATH`)
 
 Developer test requirements:
 
