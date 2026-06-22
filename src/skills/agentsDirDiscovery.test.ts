@@ -108,10 +108,8 @@ describe('codex-aligned .agents/skills discovery', () => {
   })
 
   it('preserves codex-aligned path-only dedup when .ncode/skills and .agents/skills declare the same name', async () => {
-    // Codex behavior: same skill name from different roots resolves by file
-    // identity (realpath), not by name. Two distinct files with the same
-    // name both load paths seen; downstream name-collision resolved by
-    // insertion order. NCode matches codex: path-only dedup, no name dedup.
+    // Codex: dedupe is by file identity (realpath), not by name. Two distinct
+    // files with the same name both load; no name-based dedup.
     await mkdir(join(tempProjectDir, '.ncode', 'skills'), { recursive: true })
     await writeSkill(
       join(tempProjectDir, '.ncode', 'skills'),
@@ -128,10 +126,16 @@ describe('codex-aligned .agents/skills discovery', () => {
     const skills = await getSkillDirCommands(tempProjectDir)
     const shared = skills.filter(s => s.name === 'shared-name')
 
-    // At least one entry is present under the colliding name. Codex-aligned
-    // behavior is path-dedup, so both source paths were scanned; no name
-    // dedup is applied in the discovery layer.
-    expect(shared.length).toBeGreaterThanOrEqual(1)
+    // Both source paths loaded with distinct skillRoots, proving path-only
+    // dedup (realpath) rather than name dedup.
+    expect(shared.length).toBe(2)
+    const roots = shared.map(s => s.skillRoot).sort()
+    expect(roots[0]).toBe(
+      join(tempProjectDir, '.agents', 'skills', 'shared-name'),
+    )
+    expect(roots[1]).toBe(
+      join(tempProjectDir, '.ncode', 'skills', 'shared-name'),
+    )
   })
 
   it('does NOT discover .agents/commands or .agents/agents', async () => {

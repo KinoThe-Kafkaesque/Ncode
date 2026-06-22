@@ -12,6 +12,7 @@ import { getProjectRoot } from '../bootstrap/state.js'
 import { logForDebugging } from './debug.js'
 import {
   getCanonicalNcodeConfigHomeDir,
+  getCrossVendorAgentsHomeDir,
   getLegacyClaudeConfigHomeDir,
   isEnvTruthy,
 } from './envUtils.js'
@@ -74,17 +75,15 @@ function getExistingUserDirs(subdir: NcodeConfigDirectory): string[] {
   const dirs: string[] = []
   pushIfExistingDir(dirs, join(getLegacyClaudeConfigHomeDir(), subdir))
   pushIfExistingDir(dirs, join(getCanonicalNcodeConfigHomeDir(), subdir))
-  // Codex-compatible cross-vendor user-global skills surface.
-  // Hardcoded to $HOME — `.agents/` is a cross-vendor convention and MUST NOT
-  // follow NCODE_CONFIG_DIR / CLAUDE_CONFIG_DIR, which are vendor-scoped.
-  // Asymmetry: `.agents/skills` only. `.agents/commands` and `.agents/agents`
-  // are intentionally NOT loaded here — those directories have vendor-specific
-  // behavior that the cross-vendor `.agents/` spec does not carry.
-  //
-  // Honors `process.env.HOME` explicitly so tests can pin home without
-  // patching os.homedir (Bun's os.homedir caches HOME at process start).
+  // Codex-aligned cross-vendor user-global skills surface. `.agents/` is
+  // cross-vendor and follows $HOME, not NCODE_CONFIG_DIR/CLAUDE_CONFIG_DIR.
+  // Skills-only asymmetry: `.agents/commands` and `.agents/agents` are not
+  // loaded here.
   if (subdir === 'skills') {
-    pushIfExistingDir(dirs, join(process.env.HOME ?? homedir(), '.agents', subdir))
+    pushIfExistingDir(
+      dirs,
+      join(getCrossVendorAgentsHomeDir(), '.agents', subdir),
+    )
   }
   return dirs
 }
@@ -304,11 +303,9 @@ export function getProjectDirsUpToHome(
     for (const configDir of getExistingProjectOrManagedDirs(current, subdir)) {
       dirs.push(configDir)
     }
-    // Codex-compatible cross-vendor ancestor walk: per-directory
-    // `<dir>/.agents/skills` discovered at every ancestor of cwd up to the
-    // project root, matching codex-rs/core-skills `repo_agents_skill_roots`.
-    // Asymmetry: `.agents/skills` only. No `.agents/commands`, `.agents/agents`.
-    // No recursive scan of the whole repo — ancestor-scoped only.
+    // Codex-aligned cross-vendor ancestor walk: per-directory
+    // `<dir>/.agents/skills` matching `repo_agents_skill_roots`. Skills-only;
+    // no recursive whole-repo scan.
     if (subdir === 'skills') {
       pushIfExistingDir(dirs, join(current, '.agents', subdir))
     }
