@@ -1,6 +1,7 @@
 import { realpath } from 'fs/promises'
 import ignore from 'ignore'
 import memoize from 'lodash-es/memoize.js'
+import { homedir } from 'os'
 import {
   basename,
   dirname,
@@ -643,6 +644,21 @@ async function loadSkillsFromCommandsDir(
 export const getSkillDirCommands = memoize(
   async (cwd: string): Promise<Command[]> => {
     const userSkillsDir = join(getClaudeConfigHomeDir(), 'skills')
+    // Codex-compatible cross-vendor user-global skills. Hardcoded to $HOME —
+    // `.agents/` is a cross-vendor convention and MUST NOT follow
+    // NCODE_CONFIG_DIR / CLAUDE_CONFIG_DIR (those are vendor-scoped). Matches
+    // codex-rs/core-skills `skill_roots_from_layer_stack_inner` User layer
+    // (which loads both `$CODEX_HOME/skills` deprecated and
+    // `$HOME/.agents/skills`). Asymmetry: `.agents/skills` only; no
+    // `.agents/commands`, `.agents/agents`.
+    //
+    // Honors `process.env.HOME` explicitly so tests can pin home without
+    // patching os.homedir (Bun's os.homedir caches HOME at process start).
+    const userAgentsSkillsDir = join(
+      process.env.HOME ?? homedir(),
+      '.agents',
+      'skills',
+    )
     const managedSkillsDirs = getExistingProjectOrManagedDirs(
       getManagedFilePath(),
       'skills',
@@ -698,7 +714,10 @@ export const getSkillDirCommands = memoize(
             ),
           ).then(results => results.flat()),
       isSettingSourceEnabled('userSettings') && !skillsLocked
-        ? loadSkillsFromSkillsDir(userSkillsDir, 'userSettings')
+        ? Promise.all([
+            loadSkillsFromSkillsDir(userSkillsDir, 'userSettings'),
+            loadSkillsFromSkillsDir(userAgentsSkillsDir, 'userSettings'),
+          ]).then(results => results.flat())
         : Promise.resolve([]),
       projectSettingsEnabled
         ? Promise.all(
@@ -905,6 +924,28 @@ export async function discoverSkillDirsForPaths(
           } catch {
             // Directory doesn't exist — already recorded above, continue
           }
+        }
+      }
+
+      // Codex-compatible cross-vendor ancestor walk: per-directory
+      // `<dir>/.agents/skills` discovered alongside the vendor-specific dirs,
+      // matching codex-rs/core-skills `repo_agents_skill_roots`. Asymmetry:
+      // `.agents/skills` only; no `.agents/commands`, `.agents/agents`.
+      // No whole-repo recursive scan — ancestor-scoped only.
+      const agentsSkillsDir = join(currentDir, '.agents', 'skills')
+      if (!dynamicSkillDirs.has(agentsSkillsDir)) {
+        dynamicSkillDirs.add(agentsSkillsDir)
+        try {
+          await fs.stat(agentsSkillsDir)
+          if (await isPathGitignored(currentDir, resolvedCwd)) {
+            logForDebugging(
+              `[skills] Skipped gitignored .agents/skills dir: ${agentsSkillsDir}`,
+            )
+          } else {
+            newDirs.push(agentsSkillsDir)
+          }
+        } catch {
+          // Directory doesn't exist — already recorded above, continue
         }
       }
 
