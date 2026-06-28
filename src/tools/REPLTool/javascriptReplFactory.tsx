@@ -32,7 +32,40 @@ import {
 
 const DEFAULT_TIMEOUT_MS = 30_000
 const MAX_TIMEOUT_MS = 120_000
-const PREVIEW_LIMIT = 20_000
+const PARALLEL_CONCURRENCY = 8
+
+async function runParallel<T>(
+  thunks: Array<() => Promise<T> | T>,
+  concurrency: number,
+): Promise<T[]> {
+  const results = new Array<T>(thunks.length)
+  let cursor = 0
+  async function worker(): Promise<void> {
+    while (true) {
+      const index = cursor++
+      if (index >= thunks.length) return
+      results[index] = await thunks[index]!()
+    }
+  }
+  const workers: Array<Promise<void>> = []
+  for (let i = 0; i < Math.min(concurrency, thunks.length); i++) {
+    workers.push(worker())
+  }
+  await Promise.all(workers)
+  return results
+}
+
+type AgentHelperOptions = {
+  subagent_type?: string
+  model?: string
+  description?: string
+  run_in_background?: boolean
+  name?: string
+  team_name?: string
+  mode?: string
+  isolation?: string
+  cwd?: string
+}
 
 type RegisteredTool = {
   name: string
@@ -272,9 +305,70 @@ function ensureRuntimeHelpers(
       schema: tool.schema,
     }))
 
+  const agent = async (
+    prompt: string,
+    opts?: AgentHelperOptions,
+  ): Promise<string> => {
+    if (typeof prompt !== 'string' || prompt.trim() === '') {
+      throw new Error('agent(prompt, opts?) requires a non-empty prompt')
+    }
+    const { run_in_background, ...restOpts } = opts ?? {}
+    const agentArgs: Record<string, unknown> = { prompt, ...restOpts }
+    if (run_in_background === true) {
+      agentArgs.run_in_background = true
+    }
+    const result = await callTool('Agent', agentArgs)
+    const data = ensureRecord(
+      (result as { data?: unknown })?.data ?? result,
+    )
+    const content = data.content
+    if (Array.isArray(content)) {
+      const text = content
+        .map(block =>
+          typeof block === 'object' && block !== null && (block as { type?: string }).type === 'text'
+            ? (block as { text?: string }).text ?? ''
+            : '',
+        )
+        .join('')
+      if (text.length > 0) {
+        return text
+      }
+    }
+    return jsonStringify(data)
+  }
+
+  const parallel = <T,>(thunks: Array<() => Promise<T> | T>): Promise<T[]> =>
+    runParallel(thunks, PARALLEL_CONCURRENCY)
+
+  const pipeline = async <T, R>(
+    items: T[],
+    ...stages: Array<(prev: unknown, original: T, index: number) => unknown>
+  ): Promise<R[]> => {
+    if (stages.length === 0) {
+      return items as unknown as R[]
+    }
+    let current: unknown[] = await runParallel(
+      items.map((item, index) => () => stages[0]!(item, item, index)),
+      PARALLEL_CONCURRENCY,
+    )
+    for (let stageIndex = 1; stageIndex < stages.length; stageIndex++) {
+      const stage = stages[stageIndex]!
+      current = await runParallel(
+        current.map((prev, index) => () =>
+          stage(prev, items[index] as T, index),
+        ),
+        PARALLEL_CONCURRENCY,
+      )
+    }
+    return current as R[]
+  }
+
   globals.console = replContext.console
   globals.callTool = callTool
   globals.listTools = listTools
+  globals.agent = agent
+  globals.parallel = parallel
+  globals.pipeline = pipeline
   globals.codex = {
     cwd: process.cwd(),
     homeDir: homedir(),
