@@ -128,11 +128,17 @@ describe('interactive vs headless inference request shape', () => {
     if (CLI_INTERNAL_BETA_HEADER) {
       expect(interactive.betas).toContain(CLI_INTERNAL_BETA_HEADER)
     }
-    expect(interactive.betas).toContain(REDACT_THINKING_BETA_HEADER)
+    expect(interactive.betas).not.toContain(REDACT_THINKING_BETA_HEADER)
     expect(interactive.betas).toContain(CONTEXT_MANAGEMENT_BETA_HEADER)
-    expect(interactive.contextManagement).toBeUndefined()
+    expect(interactive.contextManagement).toEqual({
+      edits: [
+        {
+          type: 'clear_thinking_20251015',
+          keep: 'all',
+        },
+      ],
+    })
   })
-
   it('omits interactive-only redaction behavior on the sdk-cli path', async () => {
     const headless = await summarizeInferenceRequestShapeMode({
       interactive: false,

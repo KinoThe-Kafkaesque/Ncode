@@ -1,8 +1,11 @@
 // biome-ignore-all assist/source/organizeImports: ANT-ONLY import markers must not be reordered
 import addDir from './commands/add-dir/index.js'
+import autoresearch from './commands/autoresearch/index.js'
 import autofixPr from './commands/autofix-pr/index.js'
 import backfillSessions from './commands/backfill-sessions/index.js'
 import btw from './commands/btw/index.js'
+import goal from './commands/goal/index.js'
+import guidedGoal from './commands/guided-goal/index.js'
 import goodNcode from './commands/good-claude/index.js'
 import issue from './commands/issue/index.js'
 import feedback from './commands/feedback/index.js'
@@ -262,10 +265,13 @@ const COMMANDS = memoize((): Command[] => {
   return [
     addDir,
     advisor,
+    autoresearch,
     autofixPr,
     agents,
     branch,
     btw,
+    goal,
+    guidedGoal,
     chrome,
     clear,
     color,

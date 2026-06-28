@@ -208,6 +208,9 @@ const sessionTranscriptModule = feature('KAIROS')
   : null
 /* eslint-enable @typescript-eslint/no-require-imports */
 import { hasUltrathinkKeyword, isUltrathinkEnabled } from './thinking.js'
+import { hasOrchestrateKeyword, isOrchestrateEnabled } from './orchestrate.js'
+import { buildActiveGoalPrompt, isGoalModeActive } from '../goals/index.js'
+import { buildAutoresearchContext } from '../autoresearch/index.js'
 import {
   tokenCountFromLastAPIResponse,
   tokenCountWithEstimation,
@@ -685,6 +688,17 @@ export type Attachment =
       level: 'high'
     }
   | {
+      type: 'orchestrate'
+    }
+  | {
+      type: 'goal_context'
+      content: string
+    }
+  | {
+      type: 'autoresearch_context'
+      content: string
+    }
+  | {
       type: 'deferred_tools_delta'
       addedNames: string[]
       addedLines: string[]
@@ -831,6 +845,15 @@ export async function getAttachments(
     maybe('queued_commands', () => getQueuedCommandAttachments(queuedCommands)),
     maybe('date_change', () =>
       Promise.resolve(getDateChangeAttachments(messages)),
+    ),
+    maybe('orchestrate', () =>
+      Promise.resolve(getOrchestrateAttachment(input)),
+    ),
+    maybe('goal_context', () =>
+      Promise.resolve(getGoalContextAttachment(toolUseContext)),
+    ),
+    maybe('autoresearch_context', () =>
+      getAutoresearchContextAttachment(toolUseContext),
     ),
     maybe('ultrathink_effort', () =>
       Promise.resolve(getUltrathinkEffortAttachment(input)),
@@ -1455,6 +1478,45 @@ function getUltrathinkEffortAttachment(input: string | null): Attachment[] {
   }
   logEvent('ncode_ultrathink', {})
   return [{ type: 'ultrathink_effort', level: 'high' }]
+}
+
+function getOrchestrateAttachment(input: string | null): Attachment[] {
+  if (!isOrchestrateEnabled() || !input || !hasOrchestrateKeyword(input)) {
+    return []
+  }
+  logEvent('ncode_orchestrate', {})
+  return [{ type: 'orchestrate' }]
+}
+
+/**
+ * Inject the persistent `<goal_context>` while goal mode is active. Main thread
+ * only — subagents have their own task scope and must not inherit the goal.
+ */
+function getGoalContextAttachment(toolUseContext: ToolUseContext): Attachment[] {
+  if (toolUseContext.agentId) return []
+  if (!isGoalModeActive()) return []
+  const content = buildActiveGoalPrompt()
+  if (!content) return []
+  return [{ type: 'goal_context', content }]
+}
+
+/**
+ * Inject the per-turn `<autoresearch_context>` while autoresearch mode is active.
+ * Phase 1 (no session yet) renders the harness-setup prompt; Phase 2 renders the
+ * iteration prompt with the current segment/baseline/run state. Main thread only —
+ * subagents must not inherit the experiment loop. Async: `buildAutoresearchContext`
+ * re-checks the git branch and reads the per-project JSON store.
+ */
+async function getAutoresearchContextAttachment(
+  toolUseContext: ToolUseContext,
+): Promise<Attachment[]> {
+  if (toolUseContext.agentId) return []
+  // Always delegate while desired: buildAutoresearchContext returns undefined
+  // (no git/store I/O) when mode is not desired, and re-checks the git branch
+  // every turn so returning to the autoresearch/* branch re-enables the loop.
+  const content = await buildAutoresearchContext()
+  if (!content) return []
+  return [{ type: 'autoresearch_context', content }]
 }
 
 // Exported for compact.ts — the gate must be identical at both call sites.

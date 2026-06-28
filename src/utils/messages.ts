@@ -82,6 +82,7 @@ import {
 } from './attachments.js'
 import { quote } from './bash/shellQuote.js'
 import { formatNumber, formatTokens } from './format.js'
+import { ORCHESTRATE_NOTICE } from './orchestrate.js'
 import { getPewterLedgerVariant } from './planModeV2.js'
 import { jsonStringify } from './slowOperations.js'
 
@@ -4271,6 +4272,30 @@ You have exited auto mode. The user may now want to interact more directly. You 
       return wrapMessagesInSystemReminder([
         createUserMessage({
           content: `The user has requested reasoning effort level: ${attachment.level}. Apply this to the current turn.`,
+          isMeta: true,
+        }),
+      ])
+    }
+    case 'orchestrate': {
+      return wrapMessagesInSystemReminder([
+        createUserMessage({
+          content: ORCHESTRATE_NOTICE,
+          isMeta: true,
+        }),
+      ])
+    }
+    case 'goal_context': {
+      return wrapMessagesInSystemReminder([
+        createUserMessage({
+          content: attachment.content,
+          isMeta: true,
+        }),
+      ])
+    }
+    case 'autoresearch_context': {
+      return wrapMessagesInSystemReminder([
+        createUserMessage({
+          content: attachment.content,
           isMeta: true,
         }),
       ])

@@ -8,6 +8,7 @@ import { AGENT_COLOR_TO_THEME_COLOR, type AgentColorName } from '../../tools/Age
 import type { TextHighlight } from '../../utils/textHighlighting.js'
 import type { Theme } from '../../utils/theme.js'
 import { findThinkingTriggerPositions, getRainbowColor, isUltrathinkEnabled } from '../../utils/thinking.js'
+import { findOrchestratePositions, isOrchestrateEnabled } from '../../utils/orchestrate.js'
 import { findBtwTriggerPositions } from '../../utils/sideQuestion.js'
 import { findSlashCommandPositions, type Position } from '../../utils/suggestions/commandSuggestions.js'
 import {
@@ -184,6 +185,9 @@ export function derivePromptInputDisplayModel({
   'displayedValue'
 > {
   const thinkTriggers = findThinkingTriggerPositions(displayedValue)
+  const orchestrateTriggers = isOrchestrateEnabled()
+    ? findOrchestratePositions(displayedValue)
+    : []
   const ultraplanTriggers = ultraplanEnabled
     ? findUltraplanTriggerPositions(displayedValue)
     : []
@@ -293,6 +297,10 @@ export function derivePromptInputDisplayModel({
 
   if (isUltrathinkEnabled()) {
     combinedHighlights.push(...buildRainbowHighlights(thinkTriggers))
+  }
+
+  if (isOrchestrateEnabled()) {
+    combinedHighlights.push(...buildRainbowHighlights(orchestrateTriggers))
   }
 
   if (ultraplanEnabled) {

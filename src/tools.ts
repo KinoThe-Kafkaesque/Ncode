@@ -92,6 +92,11 @@ import { ListMcpResourcesTool } from './tools/ListMcpResourcesTool/ListMcpResour
 import { ReadMcpResourceTool } from './tools/ReadMcpResourceTool/ReadMcpResourceTool.js'
 import { ToolSearchTool } from './tools/ToolSearchTool/ToolSearchTool.js'
 import { EnterPlanModeTool } from './tools/EnterPlanModeTool/EnterPlanModeTool.js'
+import { GoalTool } from './tools/GoalTool/GoalTool.js'
+import { InitExperimentTool } from './tools/autoresearch/InitExperimentTool.js'
+import { RunExperimentTool } from './tools/autoresearch/RunExperimentTool.js'
+import { LogExperimentTool } from './tools/autoresearch/LogExperimentTool.js'
+import { UpdateNotesTool } from './tools/autoresearch/UpdateNotesTool.js'
 import { EnterWorktreeTool } from './tools/EnterWorktreeTool/EnterWorktreeTool.js'
 import { ExitWorktreeTool } from './tools/ExitWorktreeTool/ExitWorktreeTool.js'
 import { ConfigTool } from './tools/ConfigTool/ConfigTool.js'
@@ -234,6 +239,11 @@ export function getAllBaseTools(): Tools {
     AskUserQuestionTool,
     SkillTool,
     EnterPlanModeTool,
+    GoalTool,
+    InitExperimentTool,
+    RunExperimentTool,
+    LogExperimentTool,
+    UpdateNotesTool,
     ...(isInternalBuild() ? [ConfigTool] : []),
     ...((process.env.NCODE_BUILD_MODE === 'noumena' || process.env.USER_TYPE === 'noumena') ? [TungstenTool] : []),
     ...(SuggestBackgroundPRTool ? [SuggestBackgroundPRTool] : []),

@@ -6,9 +6,7 @@ import { extractTag } from 'src/utils/messages.js';
 import { removeSandboxViolationTags } from 'src/utils/sandbox/sandbox-ui-utils.js';
 import { Box, Text } from '../ink.js';
 import { useShortcutDisplay } from '../keybindings/useShortcutDisplay.js';
-import { countCharInString } from '../utils/stringUtils.js';
 import { MessageResponse } from './MessageResponse.js';
-const MAX_RENDERED_LINES = 10;
 type Props = {
   result: ToolResultBlockParam['content'];
   verbose: boolean;
@@ -36,7 +34,7 @@ export function FallbackToolUseErrorMessage(t0) {
       const withoutSandboxViolations = removeSandboxViolationTags(extractedError);
       const withoutErrorTags = withoutSandboxViolations.replace(/<\/?error>/g, "");
       const trimmed = withoutErrorTags.trim();
-      if (!verbose && trimmed.includes("InputValidationError: ")) {
+      if (trimmed.includes("InputValidationError: ")) {
         error = "Invalid tool parameters";
       } else {
         if (trimmed.startsWith("Error: ") || trimmed.startsWith("Cancelled: ")) {
@@ -46,13 +44,13 @@ export function FallbackToolUseErrorMessage(t0) {
         }
       }
     }
-    plusLines = countCharInString(error, "\n") + 1 - MAX_RENDERED_LINES;
+    plusLines = 0;
     T2 = MessageResponse;
     T1 = Box;
     t3 = "column";
     T0 = Text;
     t1 = "error";
-    t2 = stripUnderlineAnsi(verbose ? error : error.split("\n").slice(0, MAX_RENDERED_LINES).join("\n"));
+    t2 = stripUnderlineAnsi(error);
     $[0] = result;
     $[1] = verbose;
     $[2] = T0;

@@ -271,6 +271,8 @@ import exit from '../commands/exit/index.js';
 import { ExitFlow } from '../components/ExitFlow.js';
 import { getCurrentWorktreeSession } from '../utils/worktree.js';
 import { enqueue, type SetAppState, getCommandQueue, getCommandQueueLength, removeByFilter } from '../utils/messageQueueManager.js';
+import { onGoalTurnEnd } from '../goals/index.js';
+import { onAutoresearchTurnEnd } from '../autoresearch/index.js';
 import { useCommandQueue } from '../hooks/useCommandQueue.js';
 import { startBackgroundSession } from '../tasks/LocalMainSessionTask.js';
 import { useSessionBackgrounding } from '../hooks/useSessionBackgrounding.js';
@@ -3440,6 +3442,24 @@ export function REPL({
       idleHintShownRef.current = false;
     };
   }, [lastQueryCompletionTime, isLoading, addNotification, removeNotification]);
+
+  // Goal mode: when the agent finishes a turn and goes idle, reconcile the
+  // goal's token/time budget and enqueue the next autonomous step (a
+  // continuation prompt while active, or a one-time budget-limit steer). The
+  // enqueued message is hidden + low-priority; the queue processor starts the
+  // next turn, which ends here again — the persistent-objective loop. Guarded
+  // by a ref so each natural turn completion fires the driver exactly once.
+  const goalTurnProcessedRef = useRef(0);
+  useEffect(() => {
+    if (lastQueryCompletionTime === 0) return;
+    if (isLoading) return;
+    if (goalTurnProcessedRef.current === lastQueryCompletionTime) return;
+    goalTurnProcessedRef.current = lastQueryCompletionTime;
+    onGoalTurnEnd();
+    // Autoresearch shares the same idle driver: when its experiment loop is
+    // armed (or a run is unlogged), enqueue the next iteration's resume prompt.
+    onAutoresearchTurnEnd();
+  }, [lastQueryCompletionTime, isLoading]);
 
   // Submits incoming prompts from teammate messages or tasks mode as new turns
   // Returns true if submission succeeded, false if a query is already running

@@ -80,7 +80,7 @@ export function UserToolResultMessage(t0) {
     }) ?? {};
     let t2;
     if ($[1] !== isTranscriptMode || $[2] !== lookups || $[3] !== progressMessagesForMessage || $[4] !== style || $[5] !== t1 || $[6] !== toolUse?.tool || $[7] !== tools || $[8] !== verbose) {
-      t2 = <UserToolRejectMessage input={t1} progressMessagesForMessage={progressMessagesForMessage} tool={toolUse?.tool} tools={tools} lookups={lookups} style={style} verbose={verbose} isTranscriptMode={isTranscriptMode} />;
+      t2 = <UserToolRejectMessage input={t1} progressMessagesForMessage={progressMessagesForMessage} tool={toolUse?.tool} tools={tools} lookups={lookups} style={style} verbose={true} isTranscriptMode={isTranscriptMode} />;
       $[1] = isTranscriptMode;
       $[2] = lookups;
       $[3] = progressMessagesForMessage;
@@ -98,7 +98,7 @@ export function UserToolResultMessage(t0) {
   if (variant === 'error') {
     let t1;
     if ($[10] !== isTranscriptMode || $[11] !== param || $[12] !== progressMessagesForMessage || $[13] !== toolUse?.tool || $[14] !== tools || $[15] !== verbose) {
-      t1 = <UserToolErrorMessage progressMessagesForMessage={progressMessagesForMessage} tool={toolUse?.tool} tools={tools} param={param} verbose={verbose} isTranscriptMode={isTranscriptMode} />;
+      t1 = <UserToolErrorMessage progressMessagesForMessage={progressMessagesForMessage} tool={toolUse?.tool} tools={tools} param={param} verbose={true} isTranscriptMode={isTranscriptMode} />;
       $[10] = isTranscriptMode;
       $[11] = param;
       $[12] = progressMessagesForMessage;
@@ -116,7 +116,7 @@ export function UserToolResultMessage(t0) {
   }
   let t1;
   if ($[17] !== isTranscriptMode || $[18] !== lookups || $[19] !== message || $[20] !== progressMessagesForMessage || $[21] !== style || $[22] !== toolUse.tool || $[23] !== toolUse.toolUse.id || $[24] !== tools || $[25] !== verbose || $[26] !== width) {
-    t1 = <UserToolSuccessMessage message={message} lookups={lookups} toolUseID={toolUse.toolUse.id} progressMessagesForMessage={progressMessagesForMessage} style={style} tool={toolUse.tool} tools={tools} verbose={verbose} width={width} isTranscriptMode={isTranscriptMode} />;
+    t1 = <UserToolSuccessMessage message={message} lookups={lookups} toolUseID={toolUse.toolUse.id} progressMessagesForMessage={progressMessagesForMessage} style={style} tool={toolUse.tool} tools={tools} verbose={true} width={width} isTranscriptMode={isTranscriptMode} />;
     $[17] = isTranscriptMode;
     $[18] = lookups;
     $[19] = message;

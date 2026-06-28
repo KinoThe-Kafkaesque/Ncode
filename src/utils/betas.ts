@@ -4,7 +4,7 @@ import {
   checkStatsigFeatureGate_CACHED_MAY_BE_STALE,
   getFeatureValue_CACHED_MAY_BE_STALE,
 } from 'src/services/analytics/growthbook.js'
-import { getIsNonInteractiveSession, getSdkBetas } from '../bootstrap/state.js'
+import { getSdkBetas } from '../bootstrap/state.js'
 import {
   BEDROCK_EXTRA_PARAMS_HEADERS,
   CLAUDE_CODE_20250219_BETA_HEADER,
@@ -13,7 +13,6 @@ import {
   CONTEXT_MANAGEMENT_BETA_HEADER,
   INTERLEAVED_THINKING_BETA_HEADER,
   PROMPT_CACHING_SCOPE_BETA_HEADER,
-  REDACT_THINKING_BETA_HEADER,
   STRUCTURED_OUTPUTS_BETA_HEADER,
   SUMMARIZE_CONNECTOR_TEXT_BETA_HEADER,
   TOKEN_EFFICIENT_TOOLS_BETA_HEADER,
@@ -28,7 +27,6 @@ import { isEnvDefinedFalsy, isEnvTruthy } from './envUtils.js'
 import { getCanonicalName } from './model/model.js'
 import { get3PModelCapabilityOverride } from './model/modelSupportOverrides.js'
 import { getAPIProvider } from './model/providers.js'
-import { getInitialSettings } from './settings/settings.js'
 import { isInternalBuild } from 'src/capabilities/static.js'
 
 /**
@@ -267,20 +265,6 @@ export const getAllModelBetas = memoize((model: string): string[] => {
     betaHeaders.push(INTERLEAVED_THINKING_BETA_HEADER)
   }
 
-  // Skip the API-side Haiku thinking summarizer — the summary is only used
-  // for ctrl+o display, which interactive users rarely open. The API returns
-  // redacted_thinking blocks instead; AssistantRedactedThinkingMessage already
-  // renders those as a stub. SDK / print-mode keep summaries because callers
-  // may iterate over thinking content. Users can opt back in via settings.json
-  // showThinkingSummaries.
-  if (
-    includeFirstPartyOnlyBetas &&
-    modelSupportsISP(model) &&
-    !getIsNonInteractiveSession() &&
-    getInitialSettings().showThinkingSummaries !== true
-  ) {
-    betaHeaders.push(REDACT_THINKING_BETA_HEADER)
-  }
 
   // POC: server-side connector-text summarization (anti-distillation). The
   // API buffers assistant text between tool calls, summarizes it, and returns
