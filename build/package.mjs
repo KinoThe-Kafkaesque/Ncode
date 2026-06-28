@@ -4,6 +4,7 @@ import {
   readdir,
   readFile,
   rm,
+  symlink,
   writeFile,
 } from 'node:fs/promises';
 import path from 'node:path';
@@ -230,6 +231,11 @@ export async function buildCompiledPackage(options = {}) {
     `${JSON.stringify(manifest, null, 2)}\n`,
     'utf8',
   );
+
+  // Stable symlink for version-agnostic access (e.g. ~/.local/bin/ncode).
+  const stableLinkPath = path.join(parsed.outDir, 'ncode');
+  await rm(stableLinkPath, { force: true });
+  await symlink(binaryPath, stableLinkPath);
 
   if (!parsed.skipArchive) {
     await createZipFromDirectory(packageDir, zipPath);

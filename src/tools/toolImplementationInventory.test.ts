@@ -11,7 +11,7 @@ const IMPLEMENTATION_BY_NAME = indexToolImplementationInventory(
 
 describe('toolImplementationInventory', () => {
   it('covers the on-disk tool surface including special implementation-only tools', () => {
-    expect(IMPLEMENTATION_INVENTORY.length).toBe(56)
+    expect(IMPLEMENTATION_INVENTORY.length).toBe(58)
     expect(IMPLEMENTATION_BY_NAME.has('StructuredOutput')).toBe(true)
     expect(IMPLEMENTATION_BY_NAME.has('mcp__<server>__authenticate')).toBe(true)
     expect(IMPLEMENTATION_BY_NAME.has('WebBrowser')).toBe(false)
@@ -59,9 +59,11 @@ describe('toolImplementationInventory', () => {
     })
     expect(IMPLEMENTATION_BY_NAME.get('js_repl')).toMatchObject({
       sourceFamily: 'REPLTool',
-      reachableProfiles: ['sdk_cli_repl'],
       reachableInCurrentBuild: true,
     })
+    // js_repl is default-on in all CLI profiles (additive tool, doesn't hide direct tools)
+    expect(IMPLEMENTATION_BY_NAME.get('js_repl')!.reachableProfiles).toContain('default_internal_cli')
+    expect(IMPLEMENTATION_BY_NAME.get('js_repl')!.reachableProfiles).toContain('sdk_cli_repl')
     expect(IMPLEMENTATION_BY_NAME.get('REPL')).toMatchObject({
       sourceFamily: 'REPLTool',
       reachableProfiles: ['sdk_cli_repl'],

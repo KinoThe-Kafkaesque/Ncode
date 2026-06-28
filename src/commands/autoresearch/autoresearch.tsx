@@ -6,6 +6,8 @@ import {
   getAutoresearchRuntime,
   toggleOffAutoresearch,
 } from '../../autoresearch/index.js'
+import { startExportServer } from '../../autoresearch/exportServer.js'
+import { getCwd } from '../../utils/cwd.js'
 import type { LocalJSXCommandOnDone } from '../../types/command.js'
 import { errorMessage } from '../../utils/errors.js'
 
@@ -56,6 +58,21 @@ export async function call(
         (line): line is string => Boolean(line),
       )
       done(onDone, lines.join('\n') || 'Autoresearch session cleared.')
+      return null
+    }
+
+    if (trimmed === 'export' || trimmed.startsWith('export ')) {
+      const portPart = trimmed === 'export' ? '' : trimmed.slice('export '.length).trim()
+      const port = portPart ? parseInt(portPart, 10) : 0
+      try {
+        const { url } = startExportServer(getCwd(), port)
+        done(
+          onDone,
+          `Autoresearch dashboard exported to ${url}\nOpen this URL in a browser to view the live experiment dashboard.`,
+        )
+      } catch (error) {
+        done(onDone, `Failed to start export server: ${errorMessage(error)}`)
+      }
       return null
     }
 

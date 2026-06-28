@@ -1,510 +1,115 @@
 /**
- * Autoresearch storage — JSON store (faithful replacement for oh-my-pi's
- * `bun:sqlite` `AutoresearchStorage`).
+ * Autoresearch storage — thin JSONL helpers over `.auto/log.jsonl`.
  *
- * ncode has no sqlite, so the sessions+runs schema is persisted as a single
- * JSON document per project under `~/.ncode/autoresearch/<encoded-project>.json`,
- * with run artifact logs under `~/.ncode/autoresearch/<encoded-project>/runs/<id4>/`.
- * The on-disk shape mirrors the oh-my-pi `SessionRow`/`RunRow` records 1:1
- * (camelCase here instead of snake_case columns).
- *
- * Concurrency: mutations take a `proper-lockfile` lock on the store file
- * (precedent: `src/history.ts`) and re-read before applying, so two ncode
- * sessions in the same project don't clobber each other. Reads are lock-free
- * snapshots of the file.
+ * Replaces the legacy out-of-tree JSON store (`~/.ncode/autoresearch/<encoded>.json`
+ * with `AutoresearchStore`). The upstream pi-autoresearch model appends every
+ * session config header and run entry as a single JSON line per record; state is
+ * reconstructed from the log on demand (see `state.ts` / `jsonl.ts`). No locks:
+ * the log is append-only and per-project.
  */
 
 import {
+  appendFileSync,
   existsSync,
-  mkdirSync,
   readFileSync,
-  writeFileSync,
+  unlinkSync,
 } from 'node:fs'
-import { dirname, join } from 'node:path'
-import { getNcodeConfigHomeDir } from '../utils/envUtils.js'
-import { lock } from '../utils/lockfile.js'
-import { repoRoot } from './git.js'
-import type {
-  ASIData,
-  ExperimentStatus,
-  MetricDirection,
-  NumericMetricMap,
-} from './types.js'
+import { relative } from 'node:path'
+import {
+  ensureParentDir,
+  sessionFileCandidates,
+  sessionFilePath,
+} from './paths.js'
+import {
+  isAutoresearchRunEntry,
+  parseJsonlEntry,
+  type JsonlEntry,
+} from './jsonl.js'
 
-const STORE_SCHEMA_VERSION = 1
-
-export interface SessionRow {
-  id: number
+/**
+ * Config header appended at the start of a `.auto/log.jsonl` session (and at
+ * the start of any new segment). Mirrors the fields `init_experiment` records.
+ */
+export interface ConfigHeader {
   name: string
-  goal: string | null
-  primaryMetric: string
+  metricName: string
   metricUnit: string
-  direction: MetricDirection
-  preferredCommand: string | null
-  branch: string | null
-  baselineCommit: string | null
-  currentSegment: number
-  maxIterations: number | null
-  scopePaths: string[]
-  offLimits: string[]
-  constraints: string[]
-  secondaryMetrics: string[]
-  notes: string
-  createdAt: number
-  closedAt: number | null
-}
-
-export interface RunRow {
-  id: number
-  sessionId: number
-  segment: number
-  command: string
-  startedAt: number
-  completedAt: number | null
-  durationMs: number | null
-  exitCode: number | null
-  timedOut: boolean
-  parsedPrimary: number | null
-  parsedMetrics: NumericMetricMap | null
-  parsedAsi: ASIData | null
-  preRunDirtyPaths: string[]
-  logPath: string
-  status: ExperimentStatus | null
-  description: string | null
-  metric: number | null
-  metrics: NumericMetricMap | null
-  asi: ASIData | null
-  commitHash: string | null
-  confidence: number | null
-  modifiedPaths: string[] | null
-  scopeDeviations: string[] | null
-  justification: string | null
-  flagged: boolean
-  flaggedReason: string | null
-  loggedAt: number | null
-  abandonedAt: number | null
-}
-
-interface StoreData {
-  schemaVersion: number
-  nextSessionId: number
-  nextRunId: number
-  sessions: SessionRow[]
-  runs: RunRow[]
-}
-
-export interface OpenSessionParams {
-  name: string
-  goal: string | null
-  primaryMetric: string
-  metricUnit: string
-  direction: MetricDirection
-  preferredCommand: string | null
-  branch: string | null
-  baselineCommit: string | null
-  maxIterations: number | null
-  scopePaths: string[]
-  offLimits: string[]
-  constraints: string[]
-  secondaryMetrics: string[]
-}
-
-export interface UpdateSessionParams {
+  bestDirection: 'lower' | 'higher'
   goal?: string | null
-  preferredCommand?: string | null
-  maxIterations?: number | null
   scopePaths?: string[]
   offLimits?: string[]
   constraints?: string[]
-  secondaryMetrics?: string[]
-  primaryMetric?: string
-  metricUnit?: string
-  direction?: MetricDirection
-  branch?: string | null
+  maxIterations?: number | null
   baselineCommit?: string | null
-  notes?: string
 }
 
-export interface InsertRunParams {
-  sessionId: number
-  segment: number
-  command: string
-  logPath: string
-  preRunDirtyPaths: string[]
-  startedAt: number
+/** True when a `.auto/log.jsonl` (or legacy `autoresearch.jsonl`) exists. */
+export function sessionLogExists(workDir: string): boolean {
+  return existsSync(sessionFilePath(workDir, 'log'))
 }
 
-export interface MarkRunCompletedParams {
-  runId: number
-  completedAt: number
-  durationMs: number
-  exitCode: number | null
-  timedOut: boolean
-  parsedPrimary: number | null
-  parsedMetrics: NumericMetricMap | null
-  parsedAsi: ASIData | null
-}
-
-export interface MarkRunLoggedParams {
-  runId: number
-  status: ExperimentStatus
-  description: string
-  metric: number
-  metrics: NumericMetricMap
-  asi: ASIData | null
-  commitHash: string | null
-  confidence: number | null
-  modifiedPaths: string[]
-  scopeDeviations: string[]
-  justification: string | null
-  loggedAt: number
+/** Read the raw JSONL content of the session log, or '' if it does not exist. */
+export function readJsonlContent(workDir: string): string {
+  const filePath = sessionFilePath(workDir, 'log')
+  if (!existsSync(filePath)) return ''
+  return readFileSync(filePath, 'utf8')
 }
 
 /**
- * Encode an absolute project path into a single filesystem-safe segment.
- * Mirrors oh-my-pi's `encodeProjectKey` (the `--…--` wrapper is kept for parity).
+ * Return the last run entry in the session log, or null if there are none.
+ * Used by hooks to inspect the most recently logged run.
  */
-function encodeProjectKey(root: string): string {
-  return `--${root.replace(/^[/\\]/, '').replace(/[/\\:]/g, '-')}--`
+export function readLastRunEntry(workDir: string): JsonlEntry | null {
+  const content = readJsonlContent(workDir)
+  if (content.length === 0) return null
+  let lastRun: JsonlEntry | null = null
+  for (const line of content.split('\n')) {
+    if (line.length === 0) continue
+    const entry = parseJsonlEntry(line)
+    if (entry && isAutoresearchRunEntry(entry)) lastRun = entry
+  }
+  return lastRun
 }
 
-function emptyStore(): StoreData {
-  return {
-    schemaVersion: STORE_SCHEMA_VERSION,
-    nextSessionId: 1,
-    nextRunId: 1,
-    sessions: [],
-    runs: [],
+/** Append a config header line to `.auto/log.jsonl` (for `init_experiment`). */
+export function appendConfigHeader(workDir: string, config: ConfigHeader): void {
+  const filePath = sessionFilePath(workDir, 'log')
+  ensureParentDir(filePath)
+  const entry: JsonlEntry = {
+    type: 'config',
+    name: config.name,
+    metricName: config.metricName,
+    metricUnit: config.metricUnit,
+    bestDirection: config.bestDirection,
   }
+  if (config.goal !== undefined) entry.goal = config.goal
+  if (config.scopePaths !== undefined) entry.scopePaths = config.scopePaths
+  if (config.offLimits !== undefined) entry.offLimits = config.offLimits
+  if (config.constraints !== undefined) entry.constraints = config.constraints
+  if (config.maxIterations !== undefined) entry.maxIterations = config.maxIterations
+  if (config.baselineCommit !== undefined) entry.baselineCommit = config.baselineCommit
+  appendFileSync(filePath, `${JSON.stringify(entry)}\n`)
 }
 
-export class AutoresearchStore {
-  readonly #filePath: string
-  readonly #projectDir: string
-
-  constructor(filePath: string, projectDir: string) {
-    this.#filePath = filePath
-    this.#projectDir = projectDir
-  }
-
-  get projectDir(): string {
-    return this.#projectDir
-  }
-
-  get filePath(): string {
-    return this.#filePath
-  }
-
-  #load(): StoreData {
-    try {
-      if (!existsSync(this.#filePath)) return emptyStore()
-      const parsed = JSON.parse(readFileSync(this.#filePath, 'utf8')) as StoreData
-      if (!parsed || !Array.isArray(parsed.sessions) || !Array.isArray(parsed.runs)) {
-        return emptyStore()
-      }
-      return {
-        schemaVersion: parsed.schemaVersion ?? STORE_SCHEMA_VERSION,
-        nextSessionId: parsed.nextSessionId ?? maxId(parsed.sessions) + 1,
-        nextRunId: parsed.nextRunId ?? maxId(parsed.runs) + 1,
-        sessions: parsed.sessions,
-        runs: parsed.runs,
-      }
-    } catch {
-      return emptyStore()
-    }
-  }
-
-  #save(data: StoreData): void {
-    mkdirSync(dirname(this.#filePath), { recursive: true })
-    writeFileSync(this.#filePath, JSON.stringify(data), { mode: 0o600 })
-  }
-
-  async #mutate<T>(fn: (data: StoreData) => T): Promise<T> {
-    mkdirSync(dirname(this.#filePath), { recursive: true })
-    // proper-lockfile needs the target file to exist before locking.
-    if (!existsSync(this.#filePath)) this.#save(emptyStore())
-    const release = await lock(this.#filePath, {
-      stale: 10_000,
-      retries: { retries: 5, minTimeout: 50 },
-    })
-    try {
-      const data = this.#load()
-      const result = fn(data)
-      this.#save(data)
-      return result
-    } finally {
-      await release()
-    }
-  }
-
-  // === Sessions ===
-
-  getActiveSession(): SessionRow | null {
-    const open = this.#load().sessions.filter(s => s.closedAt === null)
-    return open.length > 0 ? open[open.length - 1]! : null
-  }
-
-  getActiveSessionForBranch(branch: string | null): SessionRow | null {
-    const open = this.#load().sessions.filter(
-      s => s.closedAt === null && (branch === null ? s.branch === null : s.branch === branch),
-    )
-    return open.length > 0 ? open[open.length - 1]! : null
-  }
-
-  getSessionById(sessionId: number): SessionRow | null {
-    return this.#load().sessions.find(s => s.id === sessionId) ?? null
-  }
-
-  async openSession(params: OpenSessionParams): Promise<SessionRow> {
-    return this.#mutate(data => {
-      const session: SessionRow = {
-        id: data.nextSessionId,
-        name: params.name,
-        goal: params.goal,
-        primaryMetric: params.primaryMetric,
-        metricUnit: params.metricUnit,
-        direction: params.direction,
-        preferredCommand: params.preferredCommand,
-        branch: params.branch,
-        baselineCommit: params.baselineCommit,
-        currentSegment: 0,
-        maxIterations: params.maxIterations,
-        scopePaths: [...params.scopePaths],
-        offLimits: [...params.offLimits],
-        constraints: [...params.constraints],
-        secondaryMetrics: [...params.secondaryMetrics],
-        notes: '',
-        createdAt: Date.now(),
-        closedAt: null,
-      }
-      data.nextSessionId += 1
-      data.sessions.push(session)
-      return { ...session }
-    })
-  }
-
-  async updateSession(
-    sessionId: number,
-    updates: UpdateSessionParams,
-  ): Promise<SessionRow> {
-    return this.#mutate(data => {
-      const session = data.sessions.find(s => s.id === sessionId)
-      if (!session) throw new Error(`Session ${sessionId} not found after update`)
-      if (updates.goal !== undefined) session.goal = updates.goal
-      if (updates.preferredCommand !== undefined)
-        session.preferredCommand = updates.preferredCommand
-      if (updates.maxIterations !== undefined)
-        session.maxIterations = updates.maxIterations
-      if (updates.scopePaths !== undefined) session.scopePaths = [...updates.scopePaths]
-      if (updates.offLimits !== undefined) session.offLimits = [...updates.offLimits]
-      if (updates.constraints !== undefined)
-        session.constraints = [...updates.constraints]
-      if (updates.secondaryMetrics !== undefined)
-        session.secondaryMetrics = [...updates.secondaryMetrics]
-      if (updates.primaryMetric !== undefined)
-        session.primaryMetric = updates.primaryMetric
-      if (updates.metricUnit !== undefined) session.metricUnit = updates.metricUnit
-      if (updates.direction !== undefined) session.direction = updates.direction
-      if (updates.branch !== undefined) session.branch = updates.branch
-      if (updates.baselineCommit !== undefined)
-        session.baselineCommit = updates.baselineCommit
-      if (updates.notes !== undefined) session.notes = updates.notes
-      return { ...session }
-    })
-  }
-
-  async bumpSegment(sessionId: number): Promise<SessionRow> {
-    return this.#mutate(data => {
-      const session = data.sessions.find(s => s.id === sessionId)
-      if (!session) throw new Error(`Session ${sessionId} not found after bumping segment`)
-      session.currentSegment += 1
-      return { ...session }
-    })
-  }
-
-  async closeSession(sessionId: number): Promise<void> {
-    await this.#mutate(data => {
-      const session = data.sessions.find(s => s.id === sessionId)
-      if (session) session.closedAt = Date.now()
-    })
-  }
-
-  // === Runs ===
-
-  async insertRun(params: InsertRunParams): Promise<RunRow> {
-    return this.#mutate(data => {
-      const run: RunRow = {
-        id: data.nextRunId,
-        sessionId: params.sessionId,
-        segment: params.segment,
-        command: params.command,
-        startedAt: params.startedAt,
-        completedAt: null,
-        durationMs: null,
-        exitCode: null,
-        timedOut: false,
-        parsedPrimary: null,
-        parsedMetrics: null,
-        parsedAsi: null,
-        preRunDirtyPaths: [...params.preRunDirtyPaths],
-        logPath: params.logPath,
-        status: null,
-        description: null,
-        metric: null,
-        metrics: null,
-        asi: null,
-        commitHash: null,
-        confidence: null,
-        modifiedPaths: null,
-        scopeDeviations: null,
-        justification: null,
-        flagged: false,
-        flaggedReason: null,
-        loggedAt: null,
-        abandonedAt: null,
-      }
-      data.nextRunId += 1
-      data.runs.push(run)
-      return { ...run }
-    })
-  }
-
-  async updateRunLogPath(runId: number, logPath: string): Promise<RunRow> {
-    return this.#mutate(data => {
-      const run = requireRun(data, runId)
-      run.logPath = logPath
-      return { ...run }
-    })
-  }
-
-  async updateRunConfidence(runId: number, confidence: number | null): Promise<RunRow> {
-    return this.#mutate(data => {
-      const run = requireRun(data, runId)
-      run.confidence = confidence
-      return { ...run }
-    })
-  }
-
-  async markRunCompleted(params: MarkRunCompletedParams): Promise<RunRow> {
-    return this.#mutate(data => {
-      const run = requireRun(data, params.runId)
-      run.completedAt = params.completedAt
-      run.durationMs = params.durationMs
-      run.exitCode = params.exitCode
-      run.timedOut = params.timedOut
-      run.parsedPrimary = params.parsedPrimary
-      run.parsedMetrics = params.parsedMetrics
-      run.parsedAsi = params.parsedAsi
-      return { ...run }
-    })
-  }
-
-  async markRunLogged(params: MarkRunLoggedParams): Promise<RunRow> {
-    return this.#mutate(data => {
-      const run = requireRun(data, params.runId)
-      run.status = params.status
-      run.description = params.description
-      run.metric = params.metric
-      run.metrics = params.metrics
-      run.asi = params.asi
-      run.commitHash = params.commitHash
-      run.confidence = params.confidence
-      run.modifiedPaths = params.modifiedPaths
-      run.scopeDeviations = params.scopeDeviations
-      run.justification = params.justification
-      run.loggedAt = params.loggedAt
-      return { ...run }
-    })
-  }
-
-  async flagRun(runId: number, reason: string): Promise<RunRow> {
-    return this.#mutate(data => {
-      const run = requireRun(data, runId)
-      run.flagged = true
-      run.flaggedReason = reason
-      return { ...run }
-    })
-  }
-
-  async abandonPendingRuns(sessionId: number): Promise<number> {
-    return this.#mutate(data => {
-      const pending = data.runs.filter(
-        r => r.sessionId === sessionId && r.status === null && r.abandonedAt === null,
-      )
-      const now = Date.now()
-      for (const run of pending) run.abandonedAt = now
-      return pending.length
-    })
-  }
-
-  getPendingRun(sessionId: number): RunRow | null {
-    const pending = this.#load().runs.filter(
-      r => r.sessionId === sessionId && r.status === null && r.abandonedAt === null,
-    )
-    return pending.length > 0 ? { ...pending[pending.length - 1]! } : null
-  }
-
-  getRunById(runId: number): RunRow | null {
-    const run = this.#load().runs.find(r => r.id === runId)
-    return run ? { ...run } : null
-  }
-
-  listRuns(sessionId: number): RunRow[] {
-    return this.#load()
-      .runs.filter(r => r.sessionId === sessionId)
-      .sort((a, b) => a.id - b.id)
-  }
-
-  listLoggedRuns(sessionId: number): RunRow[] {
-    return this.#load()
-      .runs.filter(r => r.sessionId === sessionId && r.status !== null)
-      .sort((a, b) => a.id - b.id)
-  }
+/** Append a run entry line to `.auto/log.jsonl` (for `log_experiment`). */
+export function appendRunEntry(workDir: string, entry: Record<string, unknown>): void {
+  const filePath = sessionFilePath(workDir, 'log')
+  ensureParentDir(filePath)
+  appendFileSync(filePath, `${JSON.stringify(entry)}\n`)
 }
 
-function requireRun(data: StoreData, runId: number): RunRow {
-  const run = data.runs.find(r => r.id === runId)
-  if (!run) throw new Error(`Run ${runId} not found`)
-  return run
-}
-
-function maxId(rows: Array<{ id: number }>): number {
-  return rows.reduce((max, row) => Math.max(max, row.id), 0)
-}
-
-// === Path resolution + open helpers =========================================
-
-const storeCache = new Map<string, AutoresearchStore>()
-
-function autoresearchHomeDir(): string {
-  return join(getNcodeConfigHomeDir(), 'autoresearch')
-}
-
-async function resolvePaths(): Promise<{ filePath: string; projectDir: string }> {
-  const root = (await repoRoot()) ?? process.cwd()
-  const encoded = encodeProjectKey(root)
-  const home = autoresearchHomeDir()
-  return {
-    filePath: join(home, `${encoded}.json`),
-    projectDir: join(home, encoded),
+/**
+ * Delete session log files (current `.auto/log.jsonl` and legacy
+ * `autoresearch.jsonl`). Returns the relative paths (relative to `workDir`)
+ * that were actually deleted.
+ */
+export function deleteSessionLogs(workDir: string): string[] {
+  const candidates = sessionFileCandidates(workDir, 'log')
+  const deleted: string[] = []
+  for (const filePath of [candidates.current, candidates.legacy]) {
+    if (!existsSync(filePath)) continue
+    unlinkSync(filePath)
+    deleted.push(relative(workDir, filePath))
   }
-}
-
-export async function openAutoresearchStore(): Promise<AutoresearchStore> {
-  const { filePath, projectDir } = await resolvePaths()
-  const cached = storeCache.get(filePath)
-  if (cached) return cached
-  const store = new AutoresearchStore(filePath, projectDir)
-  storeCache.set(filePath, store)
-  return store
-}
-
-export async function openAutoresearchStoreIfExists(): Promise<AutoresearchStore | null> {
-  const { filePath, projectDir } = await resolvePaths()
-  const cached = storeCache.get(filePath)
-  if (cached) return cached
-  if (!existsSync(filePath)) return null
-  const store = new AutoresearchStore(filePath, projectDir)
-  storeCache.set(filePath, store)
-  return store
+  return deleted
 }

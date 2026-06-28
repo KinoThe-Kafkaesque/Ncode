@@ -1,5 +1,4 @@
 import { isEnvDefinedFalsy, isEnvTruthy } from '../../utils/envUtils.js'
-import { isInternalBuild } from 'src/capabilities/static.js'
 export const REPL_TOOL_NAME = 'REPL'
 export const JS_REPL_TOOL_NAME = 'js_repl'
 export const JS_REPL_RESET_TOOL_NAME = 'js_repl_reset'
@@ -14,14 +13,13 @@ function isCliLikeEntrypoint(): boolean {
 }
 
 /**
- * REPL mode is opt-in for internal CLI runs. The direct tool surface (Bash,
+ * REPL mode is opt-in for CLI runs. The direct tool surface (Bash,
  * Read, Edit, etc.) is the production path; REPL is only enabled when
  * explicitly requested via NCODE_REPL=1 or the legacy
  * CLAUDE_CODE_REPL=1 / CLAUDE_REPL_MODE=1. Headless sdk-cli may opt in, but
  * other SDK entrypoints stay off.
  */
 export function isReplModeEnabled(): boolean {
-  if (!isInternalBuild()) return false
   if (!isCliLikeEntrypoint()) return false
   if (isEnvDefinedFalsy(process.env.NCODE_REPL)) return false
   if (isEnvTruthy(process.env.NCODE_REPL)) return true
@@ -36,13 +34,12 @@ export function isReplModeEnabled(): boolean {
  * does not hide the direct tool surface.
  */
 export function isJsReplEnabled(): boolean {
-  if (!isInternalBuild()) return false
   if (!isCliLikeEntrypoint()) return false
   if (isEnvDefinedFalsy(process.env.NCODE_JS_REPL)) return false
   if (isEnvTruthy(process.env.NCODE_JS_REPL)) return true
   if (isEnvDefinedFalsy(process.env.CLAUDE_CODE_JS_REPL)) return false
   if (isEnvTruthy(process.env.CLAUDE_CODE_JS_REPL)) return true
-  return false
+  return true
 }
 
 /**

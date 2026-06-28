@@ -1,21 +1,26 @@
 /**
  * log_experiment — record the result of the latest run_experiment.
  *
- * Ported from oh-my-pi `autoresearch/tools/log-experiment.ts` (arktype → zod).
- * Records metric/secondary-metrics/ASI/modified-paths/scope-deviations, computes
- * MAD confidence, and applies the git outcome: `keep` → stage+commit the modified
+ * Under the JSONL storage model, the pending run is read from the live
+ * `AutoresearchRuntime.lastRunResult` (populated by `run_experiment`). The run
+ * entry is appended to `.auto/log.jsonl` via `appendRunEntry`; state is
+ * reconstructed from the log on demand via `buildExperimentState`. Records
+ * metric/secondary-metrics/ASI/modified-paths/scope-deviations, computes MAD
+ * confidence, and applies the git outcome: `keep` → stage+commit the modified
  * files; `discard`/`crash`/`checks_failed` → revert (reset --hard HEAD on an
- * autoresearch branch, else restore/clean only the run-modified paths). `flag_runs`
- * excludes earlier runs from baseline/best math. The per-segment iteration cap
+ * autoresearch branch, else restore/clean only the run-modified paths). After
+ * logging, the `after` hook fires, then the `before` hook for the next
+ * iteration (if the cap hasn't been reached). `flag_runs` is accepted but not
+ * persisted under the append-only JSONL model. The per-segment iteration cap
  * turns mode off via `disableAutoresearchMode`.
  */
-
 import * as React from 'react'
 import { rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { z } from 'zod/v4'
 import {
   disableAutoresearchMode,
+  getAutoresearchRuntime,
   markAutoResumeArmed,
 } from '../../autoresearch/index.js'
 import { isAutoresearchToolAvailable } from '../../autoresearch/index.js'
@@ -41,23 +46,31 @@ import {
   sanitizeAsi,
 } from '../../autoresearch/helpers.js'
 import {
+  type AfterHookPayload,
+  type BeforeHookPayload,
+  runHook,
+  type SessionSnapshot,
+  steerMessageFor,
+} from '../../autoresearch/hooks.js'
+import {
   buildExperimentState,
   computeConfidence,
   currentResults,
   findBaselineSecondary,
   findBestKeptMetric,
 } from '../../autoresearch/state.js'
-import type { SessionRow } from '../../autoresearch/storage.js'
+import { appendRunEntry } from '../../autoresearch/storage.js'
 import type {
   ASIData,
   ExperimentResult,
   ExperimentState,
   NumericMetricMap,
+  PendingRunResult,
 } from '../../autoresearch/types.js'
 import { getCwd } from '../../utils/cwd.js'
 import { Text } from '../../ink.js'
 import { buildTool, type Tool, type ToolDef } from '../../Tool.js'
-import { NO_SESSION_ERROR, resolveActiveSession } from './shared.js'
+import { NO_SESSION_ERROR, hasActiveSession, resolveWorkDir } from './shared.js'
 
 const inputSchema = () =>
   z.strictObject({
@@ -127,22 +140,41 @@ export const LogExperimentTool: Tool<InputSchema, Output> = buildTool({
       throw new Error('log_experiment cannot be used in agent contexts')
     }
     const cwd = getCwd()
-    const { store, session } = await resolveActiveSession()
-    if (!store || !session) {
+    if (!hasActiveSession()) {
       return { data: { text: NO_SESSION_ERROR } }
     }
-    const pendingRun = store.getPendingRun(session.id)
-    if (!pendingRun) {
+    const workDir = resolveWorkDir()
+    const runtime = getAutoresearchRuntime()
+    const lastRunResult: PendingRunResult | null = runtime.lastRunResult
+    if (!lastRunResult) {
       return { data: { text: 'Error: no pending run available. Run run_experiment first.' } }
     }
 
-    const flaggedRuns: Array<{ runId: number; reason: string }> = []
-    for (const flag of input.flag_runs ?? []) {
-      const target = store.getRunById(flag.run_id)
-      if (!target || target.sessionId !== session.id) continue
-      await store.flagRun(flag.run_id, flag.reason)
-      flaggedRuns.push({ runId: flag.run_id, reason: flag.reason })
+    // Checks gate: cannot keep a run whose .auto/checks.sh failed.
+    if (input.status === 'keep' && lastRunResult.checksPass === false) {
+      return {
+        data: {
+          text: 'Cannot keep — .auto/checks.sh failed. Log as checks_failed instead.',
+        },
+      }
     }
+    const justification = input.justification?.trim() || null
+    const warnings: string[] = []
+
+    // flag_runs is an ncode-specific feature that needs a different approach
+    // under the append-only JSONL model. Keep the input field but no-op for now.
+    const flaggedRuns: Array<{ runId: number; reason: string }> = []
+    if (input.flag_runs && input.flag_runs.length > 0) {
+      for (const flag of input.flag_runs) {
+        flaggedRuns.push({ runId: flag.run_id, reason: flag.reason })
+      }
+      warnings.push(
+        'flag_runs is not yet supported under the JSONL storage model. Run flags were recorded but not persisted.',
+      )
+    }
+
+    // Build state from the existing JSONL (before this run is appended).
+    const stateBefore = buildExperimentState(workDir)
 
     const branchName = await getCurrentAutoresearchBranch()
     const onAutoresearchBranch = branchName !== null
@@ -153,13 +185,14 @@ export const LogExperimentTool: Tool<InputSchema, Output> = buildTool({
       const workDirPrefix = await tryGitPrefix()
       allModified = parseWorkDirDirtyPaths(statusText, workDirPrefix)
     } else {
-      const { tracked, untracked } = await detectModifiedPaths(pendingRun.preRunDirtyPaths)
+      const { tracked, untracked } = await detectModifiedPaths(lastRunResult.preRunDirtyPaths)
       allModified = [...tracked, ...untracked]
     }
-    const scopeDeviations = computeScopeDeviations(allModified, session)
-
-    const justification = input.justification?.trim() || null
-    const warnings: string[] = []
+    const scopeDeviations = computeScopeDeviations(
+      allModified,
+      stateBefore.scopePaths,
+      stateBefore.offLimits,
+    )
 
     const headSha0 = await headSha()
     const explicitCommit = input.commit?.trim()
@@ -174,7 +207,7 @@ export const LogExperimentTool: Tool<InputSchema, Output> = buildTool({
           input.metric,
           input.metrics ?? {},
           allModified,
-          session.primaryMetric,
+          stateBefore.metricName,
         )
         if (commitResult.error) {
           return { data: { text: `Error: ${commitResult.error}` } }
@@ -201,7 +234,7 @@ export const LogExperimentTool: Tool<InputSchema, Output> = buildTool({
     } else {
       const revertResult = await revertFailedExperiment(
         cwd,
-        pendingRun.preRunDirtyPaths,
+        lastRunResult.preRunDirtyPaths,
         onAutoresearchBranch,
       )
       if (revertResult.error) {
@@ -212,59 +245,33 @@ export const LogExperimentTool: Tool<InputSchema, Output> = buildTool({
 
     const metric = input.metric
     const secondaryMetrics = mergeMetrics(
-      pendingRun.parsedMetrics,
+      lastRunResult.parsedMetrics,
       input.metrics,
-      session.primaryMetric,
+      stateBefore.metricName,
     )
-    const asi = mergeAsi(pendingRun.parsedAsi, sanitizeAsi(input.asi))
+    const asi = mergeAsi(lastRunResult.parsedAsi, sanitizeAsi(input.asi))
 
-    if (pendingRun.parsedPrimary !== null && metric !== pendingRun.parsedPrimary) {
+    if (lastRunResult.parsedPrimary !== null && metric !== lastRunResult.parsedPrimary) {
       warnings.push(
-        `Logged metric ${metric} differs from parsed primary ${pendingRun.parsedPrimary}. Both values stored.`,
+        `Logged metric ${metric} differs from parsed primary ${lastRunResult.parsedPrimary}. Both values stored.`,
       )
     }
 
     const loggedAt = Date.now()
-    const tentativeRun = await store.markRunLogged({
-      runId: pendingRun.id,
-      status: input.status,
-      description: input.description,
-      metric,
-      metrics: secondaryMetrics,
-      asi: asi ?? null,
-      commitHash,
-      confidence: null,
-      modifiedPaths: allModified,
-      scopeDeviations,
-      justification,
-      loggedAt,
-    })
+    const runNumber = stateBefore.results.length + 1
+    const segment = stateBefore.currentSegment
 
-    const refreshedSession = store.getSessionById(session.id) ?? session
-    const stateForConfidence = buildExperimentState(
-      refreshedSession,
-      store.listLoggedRuns(session.id),
-    )
-    const confidence = computeConfidence(
-      stateForConfidence.results,
-      stateForConfidence.currentSegment,
-      stateForConfidence.bestDirection,
-    )
-    await store.updateRunConfidence(tentativeRun.id, confidence)
-
-    const finalState = buildExperimentState(refreshedSession, store.listLoggedRuns(session.id))
-    markAutoResumeArmed()
-
-    const experiment: ExperimentResult = {
-      runNumber: tentativeRun.id,
+    // Compute confidence including the current run (not yet appended).
+    const tentativeResult: ExperimentResult = {
+      runNumber,
       commit: (commitHash ?? '').slice(0, 12),
       metric,
       metrics: secondaryMetrics,
       status: input.status,
       description: input.description,
       timestamp: loggedAt,
-      segment: pendingRun.segment,
-      confidence,
+      segment,
+      confidence: null,
       asi,
       modifiedPaths: allModified,
       scopeDeviations,
@@ -272,13 +279,79 @@ export const LogExperimentTool: Tool<InputSchema, Output> = buildTool({
       flagged: false,
       flaggedReason: null,
     }
+    const confidence = computeConfidence(
+      [...stateBefore.results, tentativeResult],
+      segment,
+      stateBefore.bestDirection,
+    )
+    tentativeResult.confidence = confidence
+
+    // Append the run entry to .auto/log.jsonl.
+    const runEntry: Record<string, unknown> = {
+      run: runNumber,
+      commit: (commitHash ?? '').slice(0, 12),
+      metric,
+      metrics: secondaryMetrics,
+      status: input.status,
+      description: input.description,
+      timestamp: loggedAt,
+      segment,
+      confidence,
+      asi: asi ?? null,
+      modifiedPaths: allModified,
+      scopeDeviations,
+      justification,
+      flagged: false,
+      flaggedReason: null,
+    }
+    appendRunEntry(workDir, runEntry)
+
+    // Rebuild state from JSONL (now includes the just-appended run).
+    const finalState = buildExperimentState(workDir)
+
+    // Fire the `after` hook (post-log).
+    const afterSnapshot = buildSessionSnapshot(finalState)
+    const afterPayload: AfterHookPayload = {
+      event: 'after',
+      cwd: workDir,
+      run_entry: runEntry,
+      session: afterSnapshot,
+    }
+    const afterResult = await runHook(afterPayload)
+    const afterSteer = steerMessageFor('after', afterResult)
+    if (afterSteer) warnings.push(afterSteer)
+
+    // Clear the pending run from runtime state.
+    runtime.lastRunResult = null
+    markAutoResumeArmed()
+
+    const experiment = tentativeResult
 
     const segmentRunCount = currentResults(finalState.results, finalState.currentSegment).length
-    if (finalState.maxExperiments !== null && segmentRunCount >= finalState.maxExperiments) {
+    const capReached =
+      finalState.maxExperiments !== null && segmentRunCount >= finalState.maxExperiments
+    if (capReached) {
       disableAutoresearchMode()
     }
 
-    const wallClockSeconds = pendingRun.durationMs !== null ? pendingRun.durationMs / 1000 : null
+    // Fire the `before` hook for the next iteration (if mode still active and
+    // cap not reached).
+    if (!capReached && runtime.autoresearchMode) {
+      const beforeSnapshot = buildSessionSnapshot(finalState)
+      const beforePayload: BeforeHookPayload = {
+        event: 'before',
+        cwd: workDir,
+        next_run: runNumber + 1,
+        last_run: runEntry,
+        session: beforeSnapshot,
+      }
+      const beforeResult = await runHook(beforePayload)
+      const beforeSteer = steerMessageFor('before', beforeResult)
+      if (beforeSteer) warnings.push(beforeSteer)
+    }
+
+    const wallClockSeconds =
+      lastRunResult.durationMs !== null ? lastRunResult.durationMs / 1000 : null
     const text = buildLogText(
       finalState,
       experiment,
@@ -394,17 +467,18 @@ async function detectModifiedPaths(
   return computeRunModifiedPaths(preRunDirtyPaths, statusText, workDirPrefix)
 }
 
-function computeScopeDeviations(modifiedPaths: string[], session: SessionRow): string[] {
+function computeScopeDeviations(
+  modifiedPaths: string[],
+  scopePaths: string[],
+  offLimits: string[],
+): string[] {
   const deviations: string[] = []
   for (const filePath of modifiedPaths) {
-    if (session.offLimits.some(spec => pathMatchesSpec(filePath, spec))) {
+    if (offLimits.some(spec => pathMatchesSpec(filePath, spec))) {
       deviations.push(filePath)
       continue
     }
-    if (
-      session.scopePaths.length > 0 &&
-      !session.scopePaths.some(spec => pathMatchesSpec(filePath, spec))
-    ) {
+    if (scopePaths.length > 0 && !scopePaths.some(spec => pathMatchesSpec(filePath, spec))) {
       deviations.push(filePath)
     }
   }
@@ -506,4 +580,16 @@ function buildLogText(
 function truncateAsiValue(value: ASIData[string]): string {
   const text = typeof value === 'string' ? value : JSON.stringify(value)
   return text.length > 120 ? `${text.slice(0, 117)}...` : text
+}
+
+function buildSessionSnapshot(state: ExperimentState): SessionSnapshot {
+  return {
+    metric_name: state.metricName,
+    metric_unit: state.metricUnit,
+    direction: state.bestDirection,
+    baseline_metric: state.bestMetric,
+    best_metric: findBestKeptMetric(state.results, state.currentSegment, state.bestDirection),
+    run_count: currentResults(state.results, state.currentSegment).length,
+    goal: state.goal ?? '',
+  }
 }

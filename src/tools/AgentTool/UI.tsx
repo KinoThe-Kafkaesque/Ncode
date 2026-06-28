@@ -627,7 +627,9 @@ export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'
 }
 function calculateAgentStats(progressMessages: ProgressMessage<Progress>[]): {
   toolUseCount: number;
-  tokens: number | null;
+  inputTokens: number | null;
+  outputTokens: number | null;
+  latestText: string | null;
 } {
   const toolUseCount = count(progressMessages, msg => {
     if (!hasProgressMessage(msg.data)) {
@@ -637,14 +639,25 @@ function calculateAgentStats(progressMessages: ProgressMessage<Progress>[]): {
     return message.type === 'user' && message.message.content.some(content => content.type === 'tool_result');
   });
   const latestAssistant = progressMessages.findLast((msg): msg is ProgressMessage<AgentToolProgress> => hasProgressMessage(msg.data) && msg.data.message.type === 'assistant');
-  let tokens = null;
+  let inputTokens = null;
+  let outputTokens = null;
+  let latestText = null;
   if (latestAssistant?.data.message.type === 'assistant') {
     const usage = latestAssistant.data.message.message.usage;
-    tokens = (usage.cache_creation_input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0) + usage.input_tokens + usage.output_tokens;
+    inputTokens = (usage.cache_creation_input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0) + usage.input_tokens;
+    outputTokens = usage.output_tokens;
+    // Extract latest text content from the assistant message
+    for (const content of latestAssistant.data.message.message.content) {
+      if (content.type === 'text' && content.text.trim()) {
+        latestText = content.text.trim();
+      }
+    }
   }
   return {
     toolUseCount,
-    tokens
+    inputTokens,
+    outputTokens,
+    latestText
   };
 }
 export function renderGroupedAgentToolUse(toolUses: Array<{
@@ -671,11 +684,13 @@ export function renderGroupedAgentToolUse(toolUses: Array<{
     param,
     isResolved,
     isError,
+    isInProgress,
     progressMessages,
     result
   }) => {
     const stats = calculateAgentStats(progressMessages);
     const lastToolInfo = extractLastToolInfo(progressMessages, tools);
+    const nextAction = extractInProgressToolInfo(progressMessages, tools);
     const parsedInput = inputSchema().safeParse(param.input);
 
     // teammate_spawned is not part of the exported Output type (cast through unknown
@@ -715,7 +730,10 @@ export function renderGroupedAgentToolUse(toolUses: Array<{
       agentType,
       description,
       toolUseCount: stats.toolUseCount,
-      tokens: stats.tokens,
+      inputTokens: stats.inputTokens,
+      outputTokens: stats.outputTokens,
+      streamingText: stats.latestText ? stats.latestText.slice(0, 100) : null,
+      nextAction,
       isResolved,
       isError,
       isAsync,
@@ -755,7 +773,7 @@ export function renderGroupedAgentToolUse(toolUses: Array<{
         </Text>
         {!allAsync && <CtrlOToExpand />}
       </Box>
-      {agentStats.map((stat, index) => <AgentProgressLine key={stat.id} agentType={stat.agentType} description={stat.description} descriptionColor={stat.descriptionColor} taskDescription={stat.taskDescription} toolUseCount={stat.toolUseCount} tokens={stat.tokens} color={stat.color} isLast={index === agentStats.length - 1} isResolved={stat.isResolved} isError={stat.isError} isAsync={stat.isAsync} shouldAnimate={shouldAnimate} lastToolInfo={stat.lastToolInfo} hideType={allSameType} name={stat.name} />)}
+      {agentStats.map((stat, index) => <AgentProgressLine key={stat.id} agentType={stat.agentType} description={stat.description} descriptionColor={stat.descriptionColor} taskDescription={stat.taskDescription} toolUseCount={stat.toolUseCount} inputTokens={stat.inputTokens} outputTokens={stat.outputTokens} streamingText={stat.streamingText} nextAction={stat.nextAction} color={stat.color} isLast={index === agentStats.length - 1} isResolved={stat.isResolved} isError={stat.isError} isAsync={stat.isAsync} shouldAnimate={shouldAnimate} lastToolInfo={stat.lastToolInfo} hideType={allSameType} name={stat.name} />)}
     </Box>;
 }
 export function userFacingName(input: Partial<{
@@ -866,6 +884,61 @@ export function extractLastToolInfo(progressMessages: ProgressMessage<Progress>[
     }
   }
   return null;
+}
+export function extractInProgressToolInfo(progressMessages: ProgressMessage<Progress>[], tools: Tools): string | null {
+  // Build set of tool_use IDs that have received tool_results
+  const completedToolUseIDs = new Set<string>();
+  const toolUseByID = new Map<string, ToolUseBlockParam>();
+  for (const pm of progressMessages) {
+    if (!hasProgressMessage(pm.data)) {
+      continue;
+    }
+    if (pm.data.message.type === 'assistant') {
+      for (const c of pm.data.message.message.content) {
+        if (c.type === 'tool_use') {
+          toolUseByID.set(c.id, c as ToolUseBlockParam);
+        }
+      }
+    }
+    if (pm.data.message.type === 'user') {
+      for (const c of pm.data.message.message.content) {
+        if (c.type === 'tool_result') {
+          completedToolUseIDs.add(c.tool_use_id);
+        }
+      }
+    }
+  }
+  // Find the latest tool_use without a matching tool_result
+  let latestInProgress: ToolUseBlockParam | null = null;
+  for (const pm of progressMessages) {
+    if (!hasProgressMessage(pm.data)) {
+      continue;
+    }
+    if (pm.data.message.type === 'assistant') {
+      for (const c of pm.data.message.message.content) {
+        if (c.type === 'tool_use' && !completedToolUseIDs.has(c.id)) {
+          latestInProgress = c as ToolUseBlockParam;
+        }
+      }
+    }
+  }
+  if (!latestInProgress) {
+    return null;
+  }
+  const tool = findToolByName(tools, latestInProgress.name);
+  if (!tool) {
+    return latestInProgress.name;
+  }
+  const input = latestInProgress.input as Record<string, unknown>;
+  const parsedInput = tool.inputSchema.safeParse(input);
+  const userFacingToolName = tool.userFacingName(parsedInput.success ? parsedInput.data : undefined);
+  if (tool.getToolUseSummary) {
+    const summary = tool.getToolUseSummary(parsedInput.success ? parsedInput.data : undefined);
+    if (summary) {
+      return `${userFacingToolName}: ${summary}`;
+    }
+  }
+  return userFacingToolName;
 }
 function isCustomSubagentType(subagentType: string | undefined): subagentType is string {
   return !!subagentType && subagentType !== GENERAL_PURPOSE_AGENT.agentType && subagentType !== 'worker';

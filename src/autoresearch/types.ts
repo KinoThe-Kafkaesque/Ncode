@@ -74,7 +74,6 @@ export interface ExperimentState {
   notes: string
   branch: string | null
   baselineCommit: string | null
-  sessionId: number | null
 }
 
 export interface PendingRunSummary {
@@ -99,6 +98,26 @@ export interface RunningExperiment {
 }
 
 /**
+ * Holds the run result between `run_experiment` and `log_experiment`.
+ * Populated when a run finishes and consumed when the result is logged.
+ */
+export interface PendingRunResult {
+  runNumber: number
+  command: string
+  durationMs: number | null
+  exitCode: number | null
+  timedOut: boolean
+  parsedPrimary: number | null
+  parsedMetrics: NumericMetricMap | null
+  parsedAsi: ASIData | null
+  passed: boolean
+  preRunDirtyPaths: string[]
+  checksPass: boolean | null
+  checksOutput: string
+  checksDuration: number
+}
+
+/**
  * Per-session live runtime state (mirrors oh-my-pi `AutoresearchRuntime`).
  *
  * `autoresearchMode` is the EFFECTIVE flag (desired mode AND on the recorded
@@ -112,6 +131,8 @@ export interface AutoresearchRuntime {
   lastAutoResumePendingRunNumber: number | null
   goal: string | null
   branch: string | null
+  lastRunResult: PendingRunResult | null
+  runningExperiment: { startedAt: number; command: string } | null
 }
 
 /** Control sidecar persisted per session (survives restart). */

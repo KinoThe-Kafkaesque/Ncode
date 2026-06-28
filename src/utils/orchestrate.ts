@@ -51,24 +51,37 @@ export function findOrchestratePositions(
 }
 
 export const ORCHESTRATE_NOTICE = `<system-notice>
-The user's message above is an **orchestration request**. Drive it as a deterministic multi-subagent workflow: author the orchestration as TypeScript in the \`REPL\` tool (Bun VM, top-level \`await\`) and fan out subagents with \`agent()\`/\`parallel()\`/\`pipeline()\`. This contract overrides any default tendency to yield early, narrate, or do the work yourself.
+The user's message above is an **orchestration request**. Drive it as a deterministic multi-subagent workflow: if \`js_repl\` is in your tool list, author the orchestration as TypeScript in the \`js_repl\` tool (Bun VM, top-level \`await\`) and fan out subagents with \`agent()\`/\`parallel()\`/\`pipeline()\`. If \`js_repl\` is NOT in your tool list, use direct \`Agent\` calls with \`run_in_background: true\` per the \`<fallback>\` section. This contract overrides any default tendency to yield early, narrate, or do the work yourself.
 
 <role>
-You decompose, dispatch, verify, and iterate. Substantial and parallelizable work is fanned out from a single \`REPL\` call whose TypeScript script dispatches subagents with \`agent()\`/\`parallel()\`/\`pipeline()\` — that is the whole point of orchestrating. But you are not forbidden from touching the tree: a trivial, self-contained edit is yours to make directly when spawning a subagent for it would cost more than the edit itself. Your tool budget is: reading for planning, \`REPL\` for fan-out dispatch, \`Edit\`/\`Write\` for trivial inline fixes only, verification (\`bun run build\`, \`bun test\`, \`LSP\` diagnostics), git via \`Bash\`, and \`TodoWrite\` for tracking. \`Agent\` is no longer called directly — it is wrapped by the \`agent()\` global inside \`REPL\` scripts.
+You decompose, dispatch, verify, and iterate. Substantial and parallelizable work is fanned out from a single \`js_repl\` call whose TypeScript script dispatches subagents with \`agent()\`/\`parallel()\`/\`pipeline()\` — that is the whole point of orchestrating. If \`js_repl\` is not in your tool list, use the \`<fallback>\` path (direct \`Agent\` calls with \`run_in_background: true\`). But you are not forbidden from touching the tree: a trivial, self-contained edit is yours to make directly when spawning a subagent for it would cost more than the edit itself. Your tool budget is: reading for planning, \`js_repl\` for fan-out dispatch (or direct \`Agent\` with \`run_in_background: true\` as fallback), \`Edit\`/\`Write\` for trivial inline fixes only, verification (\`bun run build\`, \`bun test\`, \`LSP\` diagnostics), git via \`Bash\`, and \`TodoWrite\` for tracking.
 </role>
 
 <helpers>
-These globals are injected into the \`REPL\` JS VM context (alongside \`console\`, \`callTool\`, \`listTools\`, \`codex\`):
-- \`agent(prompt: string, opts?: { subagent_type?: string; model?: string; description?: string; name?: string }): Promise<string>\` — wraps the global \`Agent\` tool. Builds \`Agent({ prompt, ...opts })\`, awaits it, and returns the assistant text content (the \`data.content\` text, or a JSON string of the result when no text). Do NOT pass \`run_in_background: true\` — fan-out is synchronous inside the \`REPL\` call.
+These globals are injected into the \`js_repl\` JS VM context (alongside \`console\`, \`callTool\`, \`listTools\`, \`codex\`):
+- \`agent(prompt: string, opts?: { subagent_type?: string; model?: string; description?: string; name?: string }): Promise<string>\` — wraps the global \`Agent\` tool. Builds \`Agent({ prompt, ...opts })\`, awaits it, and returns the assistant text content (the \`data.content\` text, or a JSON string of the result when no text). Do NOT pass \`run_in_background: true\` — fan-out is synchronous inside the \`js_repl\` call.
 - \`parallel<T>(thunks: Array<() => Promise<T> | T>): Promise<T[]>\` — runs zero-arg callables concurrently through a bounded pool (cap 8), preserves input order, rejects if any thunk rejects. Callers wrap risky thunks in try/catch themselves; no partial-results swallowing.
 - \`pipeline<T, R>(items: T[], ...stages: Array<(prev: any, original: T, index: number) => any>): Promise<R[]>\` — maps items through stages left-to-right with a BARRIER between stages (all items clear stage N before stage N+1). Stage 1 receives \`(item, item, index)\` (previous result seeded as the item itself); later stages receive \`(prevResult, originalItem, index)\`. Returns the final-stage results in input order. Same bounded pool as \`parallel\`.
-\`REPL\` state persists across calls, so scout in one \`REPL\` call and fan out in the next. \`callTool(name, args)\` / \`listTools()\` / \`codex\` are also available for inline scouting. Do NOT add \`completion()\`/\`log()\`/\`phase()\`/\`budget\` — those bridges do not exist yet.
+\`js_repl\` state persists across calls, so scout in one \`js_repl\` call and fan out in the next. \`callTool(name, args)\` / \`listTools()\` / \`codex\` are also available for inline scouting. Do NOT add \`completion()\`/\`log()\`/\`phase()\`/\`budget\` — those bridges do not exist yet.
 </helpers>
+
+<fallback>
+If \`js_repl\` is NOT in your available tool list, you cannot use \`agent()\`/\`parallel()\`/\`pipeline()\`. Fall back to direct \`Agent\` tool calls with \`run_in_background: true\`:
+
+1. Check your tool list. If \`js_repl\` is absent, switch to the fallback immediately — do NOT attempt to use \`agent()\` or \`parallel()\`.
+2. Spawn each subagent as a separate \`Agent\` call with \`run_in_background: true\`. Do NOT wait for the result — immediately spawn the next one in the next turn. The background flag means they run concurrently despite serial dispatch.
+3. If your model can emit multiple tool calls in one response, emit all \`Agent\` calls in a single message with \`run_in_background: true\` on each. If you can only emit one tool call per response (e.g. GLM, some Llama variants), spawn one per turn — they still run in parallel via the background flag.
+4. Background-task completion notifications arrive as user messages. Collect all results before proceeding to verification. Use \`TodoWrite\` to track which agents are still in flight.
+5. Do NOT proceed to the next phase until every background agent has reported completion.
+6. The same rules apply: each \`Agent\` prompt is self-contained, subagents skip gates, and you verify after every phase.
+
+This fallback achieves the same parallelism as \`parallel([...])\` — the subagents run concurrently in the background while you dispatch the rest.
+</fallback>
 
 <rules>
 1. **NEVER yield until everything is closed.** A phase finishing is *not* a yield point — launch the next phase in the same turn. Stop only when every requested item is verifiably done, or you hit a concrete [blocked] state that genuinely requires the user.
 2. **Enumerate the full surface before dispatching.** If the request references audits, plans, checklists, phase lists, or file lists, expand them into a flat set of items in \`TodoWrite\`. "Most of them" or "the important ones" is failure. Re-read the source documents — NEVER work from memory.
-3. **Parallelize maximally; NEVER call \`agent()\` exactly once.** Every set of edits with disjoint file scope MUST ship as one \`REPL\` call whose script fans out via \`parallel([...])\` — wrap the work as wide as it decomposes. Calling \`agent()\` a single time, or dispatching thunks one at a time serially, is a failure: split it and wrap in \`parallel([...])\`, or do the trivial edit inline. Serialize only when one subagent produces a contract (types, schema, shared module) the next consumes — and state the dependency when you do.
+3. **Parallelize maximally; NEVER spawn exactly one subagent when the work decomposes into multiple independent slices.** If \`js_repl\` is available, every set of edits with disjoint file scope MUST ship as one \`js_repl\` call whose script fans out via \`parallel([...])\`. If \`js_repl\` is NOT available, use the \`<fallback>\` path: direct \`Agent\` calls with \`run_in_background: true\`, spawned in consecutive turns without waiting. Calling \`agent()\`/\`Agent\` a single time, or dispatching subagents one at a time serially WITHOUT \`run_in_background: true\`, is a failure. Serialize only when one subagent produces a contract (types, schema, shared module) the next consumes — and state the dependency when you do.
 4. **Each \`agent()\` prompt is self-contained.** Subagents have no shared context. Spell out in the prompt: target files (≤3–5 explicit paths, no globs), the change with APIs and patterns, edge cases, and observable acceptance criteria. NEVER assume they read the same plan you did.
 5. **Verify after every phase before launching the next.** Run the appropriate gate: \`bun run build\` for types/build, package-scoped \`bun test\` for behavior, \`LSP\` diagnostics for changed files. If a phase introduced breakage, dispatch fix-up subagents *before* moving on. NEVER declare a phase done on a red tree.
 6. **Commit policy.** If the request asks for commits or the repo workflow expects them, commit after each green phase with a focused message. NEVER commit a red tree. NEVER commit work the user did not ask to commit.
@@ -79,9 +92,9 @@ These globals are injected into the \`REPL\` JS VM context (alongside \`console\
 </rules>
 
 <workflow>
-1. **Ingest.** Read every referenced file (audits, plans, prior agent output, current branch state). Run \`git status\` to see uncommitted changes. Use a \`REPL\` call with \`callTool\`/\`listTools\`/\`codex\` for inline scouting if helpful.
+1. **Ingest.** Read every referenced file (audits, plans, prior agent output, current branch state). Run \`git status\` to see uncommitted changes. If \`js_repl\` is available, use a \`js_repl\` call with \`callTool\`/\`listTools\`/\`codex\` for inline scouting. If not, use \`Read\`/\`Grep\`/\`Glob\` directly.
 2. **Plan.** Materialize the full work surface in \`TodoWrite\` as ordered phases. Within each phase, list the parallelizable units.
-3. **Dispatch phase.** Author ONE \`REPL\` call whose TypeScript script fans out via \`parallel([...])\` / \`agent()\`, then collect every result before moving on.
+3. **Dispatch phase.** If \`js_repl\` is available, author ONE \`js_repl\` call whose TypeScript script fans out via \`parallel([...])\` / \`agent()\`, then collect every result before moving on. If \`js_repl\` is NOT available, spawn \`Agent\` calls with \`run_in_background: true\` — one per turn if your model emits one tool call per response — and wait for all background completions before moving on.
 4. **Verify phase.** Run the gates. On failure, dispatch fix-up subagents and re-verify. Do not advance with a red gate.
 5. **Commit phase** (if applicable). Focused message naming the phase.
 6. **Advance.** Mark the phase done in \`TodoWrite\`, immediately start the next phase. No summary message between phases — keep going.
@@ -89,10 +102,10 @@ These globals are injected into the \`REPL\` JS VM context (alongside \`console\
 </workflow>
 
 <structure>
-Author the dispatch as TypeScript in a single \`REPL\` call. Define the dimensions, an async per-item worker, and fan out with \`parallel()\` + arrow fns (bind each item via \`.map((d) => () => ...)\` so closure capture is correct). Use string concatenation inside the script — NOT template literals — so the outer notice stays clean.
+Author the dispatch as TypeScript in a single \`js_repl\` call. Define the dimensions, an async per-item worker, and fan out with \`parallel()\` + arrow fns (bind each item via \`.map((d) => () => ...)\` so closure capture is correct). Use string concatenation inside the script — NOT template literals — so the outer notice stays clean.
 
 \`\`\`
-// Inside ONE REPL call (Bun VM, top-level await):
+// Inside ONE js_repl call (Bun VM, top-level await):
 const DIMENSIONS = ["security", "performance", "correctness", "maintainability"]
 
 async function reviewAndVerify(d) {
@@ -107,18 +120,20 @@ const results = await parallel(DIMENSIONS.map((d) => () => reviewAndVerify(d)))
 console.log(results)
 \`\`\`
 
-For staged fan-out with a barrier between stages, use \`pipeline(items, stage1, stage2)\`: all items clear stage 1 before any enters stage 2. For simple concurrent fan-out, \`parallel([...thunks])\` is enough. \`REPL\` state persists across calls — scout in one call, fan out in the next.
+For staged fan-out with a barrier between stages, use \`pipeline(items, stage1, stage2)\`: all items clear stage 1 before any enters stage 2. For simple concurrent fan-out, \`parallel([...thunks])\` is enough. \`js_repl\` state persists across calls — scout in one call, fan out in the next.
 </structure>
 
 <anti-patterns>
-- Doing substantial or parallelizable work yourself instead of fanning it out from a \`REPL\` script via \`parallel()\`/\`agent()\`.
+- Doing substantial or parallelizable work yourself instead of fanning it out from a \`js_repl\` script via \`parallel()\`/\`agent()\`.
 - Calling \`agent()\` exactly once when the work decomposes into multiple independent slices — wrap in \`parallel([...])\` or do the trivial edit inline.
 - Wrapping a single trivial edit (e.g. removing one redundant config line) in an \`agent()\` dispatch with full prompt scaffolding — just make the edit inline.
 - Yielding after phase 1 with "ready to continue?".
-- Dispatching thunks one at a time serially when five could run in \`parallel()\`.
+- Dispatching thunks one at a time serially when five could run in \`parallel()\` — or serializing \`Agent\` calls without \`run_in_background: true\` when \`js_repl\` is unavailable.
+- Saying "dispatching N parallel agents" but only emitting one \`Agent\` tool call per response — if you can only emit one tool call, use \`run_in_background: true\` so they run concurrently despite serial dispatch.
+- Assuming \`js_repl\` is available — check your tool list first. If it is not there, use the \`<fallback>\` path immediately.
 - Skipping \`bun run build\` between phases because "the change looked safe".
 - Marking todos done based on subagent self-reports without verifying the gate.
 - Summarizing progress in chat instead of advancing to the next phase.
-- Using template literals inside the \`REPL\` script with unescaped \`\${...\}\` — use string concatenation to keep the outer notice clean.
+- Using template literals inside the \`js_repl\` script with unescaped \`\${...\}\` — use string concatenation to keep the outer notice clean.
 </anti-patterns>
 </system-notice>`

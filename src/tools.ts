@@ -13,18 +13,10 @@ import { TaskStopTool } from './tools/TaskStopTool/TaskStopTool.js'
 import { BriefTool } from './tools/BriefTool/BriefTool.js'
 // Dead code elimination: conditional import for ant-only tools
 /* eslint-disable custom-rules/no-process-env-top-level, @typescript-eslint/no-require-imports */
-const REPLTool =
-  isInternalBuild()
-    ? require('./tools/REPLTool/REPLTool.js').REPLTool
-    : null
-const JSReplTool =
-  isInternalBuild()
-    ? require('./tools/REPLTool/JSReplTool.js').JSReplTool
-    : null
+const REPLTool = require('./tools/REPLTool/REPLTool.js').REPLTool
+const JSReplTool = require('./tools/REPLTool/JSReplTool.js').JSReplTool
 const JSReplResetTool =
-  isInternalBuild()
-    ? require('./tools/REPLTool/JSReplResetTool.js').JSReplResetTool
-    : null
+  require('./tools/REPLTool/JSReplResetTool.js').JSReplResetTool
 const PyReplTool =
   isInternalBuild()
     ? require('./tools/REPLTool/PyReplTool.js').PyReplTool

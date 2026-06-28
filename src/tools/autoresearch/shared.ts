@@ -1,31 +1,23 @@
 /**
  * Shared constants + the no-active-session guard for the autoresearch tools.
+ *
+ * Under the JSONL storage model the session is per-working-directory: an active
+ * session is simply one whose `.auto/log.jsonl` (or legacy `autoresearch.jsonl`)
+ * exists. There is no store and no per-branch session lookup.
  */
 
-import { currentBranch } from '../../autoresearch/git.js'
-import { openAutoresearchStoreIfExists } from '../../autoresearch/index.js'
-import type {
-  AutoresearchStore,
-  SessionRow,
-} from '../../autoresearch/storage.js'
-
-export const HARNESS_FILENAME = 'autoresearch.sh'
-export const DEFAULT_HARNESS_COMMAND = `bash ${HARNESS_FILENAME}`
+import { getCwd } from '../../utils/cwd.js'
+import { sessionLogExists } from '../../autoresearch/storage.js'
 
 export const NO_SESSION_ERROR =
-  'Error: no active autoresearch session for the current branch. Call init_experiment first.'
+  'Error: no active autoresearch session. Call init_experiment first.'
 
-/**
- * Resolve the active session for the current branch, or null. Mirrors the
- * oh-my-pi `storage.getActiveSessionForBranch(currentBranch)` lookup the
- * run/log/update tools all perform.
- */
-export async function resolveActiveSession(): Promise<{
-  store: AutoresearchStore | null
-  session: SessionRow | null
-}> {
-  const store = await openAutoresearchStoreIfExists()
-  const branch = await currentBranch()
-  const session = store?.getActiveSessionForBranch(branch) ?? null
-  return { store, session }
+/** The working directory the experiment tools operate on. */
+export function resolveWorkDir(): string {
+  return getCwd()
+}
+
+/** True when an autoresearch session log exists in the current working directory. */
+export function hasActiveSession(): boolean {
+  return sessionLogExists(getCwd())
 }

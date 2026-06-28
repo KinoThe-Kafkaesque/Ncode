@@ -273,6 +273,9 @@ import { getCurrentWorktreeSession } from '../utils/worktree.js';
 import { enqueue, type SetAppState, getCommandQueue, getCommandQueueLength, removeByFilter } from '../utils/messageQueueManager.js';
 import { onGoalTurnEnd } from '../goals/index.js';
 import { onAutoresearchTurnEnd } from '../autoresearch/index.js';
+import { AutoresearchWidget } from '../components/AutoresearchWidget.js';
+import { AutoresearchDashboard } from '../components/AutoresearchDashboard.js';
+import { useKeybinding } from '../keybindings/useKeybinding.js';
 import { useCommandQueue } from '../hooks/useCommandQueue.js';
 import { startBackgroundSession } from '../tasks/LocalMainSessionTask.js';
 import { useSessionBackgrounding } from '../hooks/useSessionBackgrounding.js';
@@ -1127,6 +1130,8 @@ export function REPL({
     isLocalJSXCommand?: boolean;
     isImmediate?: boolean;
   } | null>(null);
+
+  const [autoresearchDashboardVisible, setAutoresearchDashboardVisible] = useState(false);
 
   // Track local JSX commands separately so tools can't overwrite them.
   // This enables "immediate" commands (like /btw) to persist while NCode is processing.
@@ -3809,6 +3814,8 @@ export function REPL({
   });
   // Auto-exit viewing mode when teammate completes or errors
   useTeammateViewAutoExit();
+  // Toggle the autoresearch dashboard overlay (ctrl+shift+a).
+  useKeybinding('app:autoresearchDashboard', () => setAutoresearchDashboardVisible(v => !v));
   const recordPromptActivity = useCallback(() => {
     activityManager.recordUserActivity();
     updateLastInteractionTime(true);
@@ -4173,7 +4180,7 @@ export function REPL({
   // (immediate: /model, /mcp, /btw, ...) and scrollable (non-immediate:
   // /config, /theme, /diff, ...) both go here now.
   const toolJsxCentered = isFullscreenEnvEnabled() && toolJSX?.isLocalJSXCommand === true;
-  const centeredModal: React.ReactNode = toolJsxCentered ? toolJSX!.jsx : null;
+  const centeredModal: React.ReactNode = autoresearchDashboardVisible ? <AutoresearchDashboard onClose={() => setAutoresearchDashboardVisible(false)} /> : toolJsxCentered ? toolJSX!.jsx : null;
 
   // <AlternateScreen> at the root: everything below is inside its
   // <Box height={rows}>. Handlers/contexts are zero-height so ScrollBox's
@@ -4226,6 +4233,7 @@ export function REPL({
               {feature('BUDDY') && companionNarrow && isFullscreenEnvEnabled() && companionVisible ? <CompanionSprite /> : null}
               <Box flexDirection="column" flexGrow={1}>
                 {permissionStickyFooter}
+                <AutoresearchWidget onOpenDashboard={() => setAutoresearchDashboardVisible(true)} />
                 {/* Immediate local-jsx commands (/btw, /sandbox, /assistant,
                   /issue) render here, NOT inside scrollable. They stay mounted
                   while the main conversation streams behind them, so ScrollBox

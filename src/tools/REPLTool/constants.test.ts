@@ -38,13 +38,16 @@ function probeToolNames(env: Record<string, string | undefined>): string[] {
 }
 
 describe('REPL mode tool surface', () => {
-  it('keeps the interactive cli on the direct tool path by default', () => {
+  it('keeps the interactive cli on the direct tool path by default, with js_repl additive', () => {
     const toolNames = probeToolNames({})
     expect(toolNames).toContain('Bash')
     expect(toolNames).toContain('Read')
     expect(toolNames).toContain('Glob')
     expect(toolNames).toContain('Grep')
     expect(toolNames).not.toContain('REPL')
+    // js_repl is default-on in CLI builds — it's additive and doesn't hide direct tools
+    expect(toolNames).toContain('js_repl')
+    expect(toolNames).toContain('js_repl_reset')
     expect(toolNames.indexOf('Bash')).toBeLessThan(toolNames.indexOf('Glob'))
     expect(toolNames.indexOf('Bash')).toBeLessThan(toolNames.indexOf('Grep'))
     expect(toolNames.indexOf('Read')).toBeGreaterThan(toolNames.indexOf('Bash'))

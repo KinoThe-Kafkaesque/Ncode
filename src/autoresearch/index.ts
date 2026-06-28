@@ -24,7 +24,7 @@ import {
   rmSync,
   writeFileSync,
 } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { join } from 'node:path'
 import { getSessionId } from '../bootstrap/state.js'
 import { getCwd } from '../utils/cwd.js'
 import { getNcodeConfigHomeDir } from '../utils/envUtils.js'
@@ -50,20 +50,18 @@ import {
   findBestKeptMetric,
 } from './state.js'
 import {
-  openAutoresearchStore,
-  openAutoresearchStoreIfExists,
-  type RunRow,
-  type SessionRow,
+  deleteSessionLogs,
+  sessionLogExists,
 } from './storage.js'
 import type {
   AutoresearchControlState,
   AutoresearchRuntime,
   ExperimentResult,
   ExperimentState,
+  PendingRunResult,
   PendingRunSummary,
 } from './types.js'
 
-export { openAutoresearchStore, openAutoresearchStoreIfExists } from './storage.js'
 export type { AutoresearchRuntime } from './types.js'
 
 // === Live per-session runtime ===============================================
@@ -78,6 +76,8 @@ function createRuntime(): AutoresearchRuntime {
     lastAutoResumePendingRunNumber: null,
     goal: null,
     branch: null,
+    lastRunResult: null,
+    runningExperiment: null,
   }
 }
 
@@ -161,18 +161,19 @@ export async function buildAutoresearchContext(
   }
 
   const branch = await currentBranch()
-  const store = await openAutoresearchStoreIfExists()
-  const session = store?.getActiveSessionForBranch(branch) ?? null
+  const workingDir = getCwd()
+  const hasSession = sessionLogExists(workingDir)
+  // The session is per-working-directory; the recorded branch only matters for
+  // the auto-resume/detach check. Off the recorded branch ⇒ detach.
   const onActiveBranch =
-    session === null || session.branch === null || session.branch === branch
+    runtime.branch === null || runtime.branch === branch
   runtime.autoresearchMode = runtime.desiredMode && onActiveBranch
   if (!runtime.autoresearchMode) return undefined
 
-  const workingDir = getCwd()
-  const goal = runtime.goal ?? session?.goal ?? session?.name ?? ''
+  const goal = runtime.goal ?? ''
   const hasGoal = goal.trim().length > 0
 
-  if (!session || !store) {
+  if (!hasSession) {
     const onAutoresearchBranch = branch?.startsWith('autoresearch/') ?? false
     const baselineWarning = onAutoresearchBranch
       ? null
@@ -188,8 +189,8 @@ export async function buildAutoresearchContext(
     })
   }
 
-  const state = buildExperimentState(session, store.listLoggedRuns(session.id))
-  const pendingRun = pendingRunSummaryFromRow(store.getPendingRun(session.id))
+  const state = buildExperimentState(workingDir)
+  const pendingRun = pendingRunSummaryFromResult(runtime.lastRunResult)
   return renderIterationPrompt(buildIterationVars(state, workingDir, goal, hasGoal, pendingRun))
 }
 
@@ -297,11 +298,8 @@ export function onAutoresearchTurnEnd(
   }
   void (async () => {
     try {
-      const store = await openAutoresearchStoreIfExists()
-      const branch = await currentBranch()
-      const session = store?.getActiveSessionForBranch(branch) ?? null
-      const pendingRun =
-        session && store ? pendingRunSummaryFromRow(store.getPendingRun(session.id)) : null
+      const lastRun = runtime.lastRunResult
+      const pendingRun = lastRun !== null ? pendingRunSummaryFromResult(lastRun) : null
       const shouldResumePending =
         pendingRun !== null &&
         runtime.lastAutoResumePendingRunNumber !== pendingRun.runNumber
@@ -346,8 +344,8 @@ export async function activateAutoresearch(
     return { ok: false, error: branchResult.error }
   }
 
-  const store = await openAutoresearchStoreIfExists()
-  const existingSession = store?.getActiveSessionForBranch(branchResult.branchName) ?? null
+  const workingDir = getCwd()
+  const hasExistingSession = sessionLogExists(workingDir)
   const branchStatusLine = branchResult.branchName
     ? branchResult.created
       ? `Created and checked out dedicated git branch \`${branchResult.branchName}\` before resuming.`
@@ -360,13 +358,10 @@ export async function activateAutoresearch(
   runtime.lastAutoResumePendingRunNumber = null
   runtime.branch = branchResult.branchName
 
-  if (existingSession && store) {
-    if (goalArg) await store.updateSession(existingSession.id, { goal: goalArg })
-    if (branchResult.branchName) {
-      await store.updateSession(existingSession.id, { branch: branchResult.branchName })
-    }
-    const refreshed = store.getSessionById(existingSession.id) ?? existingSession
-    runtime.goal = refreshed.goal ?? goalArg
+  if (hasExistingSession) {
+    // The session log already exists in this working directory — resume it.
+    // Goal updates are recorded by init_experiment; here we just adopt the arg.
+    runtime.goal = goalArg ?? runtime.goal
     persistControlState(sessionId, runtime)
     const resumeContext = goalArg ?? ''
     return {
@@ -405,6 +400,7 @@ export function toggleOffAutoresearch(
 }
 
 const LEGACY_ARTIFACTS = [
+  '.auto',
   'autoresearch.md',
   'autoresearch.sh',
   'autoresearch.checks.sh',
@@ -425,17 +421,26 @@ export async function clearAutoresearchSession(
   sessionId: string = getSessionId(),
 ): Promise<{ notice?: string; warning?: string; error?: string }> {
   const runtime = getAutoresearchRuntime(sessionId)
-  const store = await openAutoresearchStore()
-  const session = store.getActiveSession()
+  const workDir = getCwd()
   const branch = await currentBranch()
   const onAutoresearchBranch = branch?.startsWith('autoresearch/') ?? false
   const shouldResetTree = !opts.keepTree && (onAutoresearchBranch || opts.resetTreeForce)
 
+  // Baseline commit (if any) is reconstructed from the session log.
+  let baselineCommit: string | null = null
+  if (sessionLogExists(workDir)) {
+    try {
+      baselineCommit = buildExperimentState(workDir).baselineCommit
+    } catch {
+      // Corrupt or partial log — treat as no baseline.
+    }
+  }
+
   let warning: string | undefined
   let error: string | undefined
-  if (shouldResetTree && session?.baselineCommit) {
+  if (shouldResetTree && baselineCommit) {
     try {
-      await resetHard(session.baselineCommit)
+      await resetHard(baselineCommit)
       await clean()
     } catch (err) {
       error = `Failed to reset worktree to baseline: ${err instanceof Error ? err.message : String(err)}`
@@ -444,14 +449,16 @@ export async function clearAutoresearchSession(
     warning = 'No baseline commit recorded — skipped worktree reset.'
   }
 
-  removeLegacyArtifacts(getCwd())
+  removeLegacyArtifacts(workDir)
+  deleteSessionLogs(workDir)
 
-  if (session) await store.closeSession(session.id)
   runtime.desiredMode = false
   runtime.autoresearchMode = false
   runtime.autoResumeArmed = false
   runtime.goal = null
   runtime.branch = null
+  runtime.lastRunResult = null
+  runtime.runningExperiment = null
   persistControlState(sessionId, runtime)
 
   return { notice: 'Autoresearch session cleared.', warning, error }
@@ -477,27 +484,25 @@ function removeLegacyArtifacts(workDir: string): void {
   }
 }
 
-// === Shared row→summary helpers (ported from oh-my-pi index.ts) =============
+// === Shared result→summary helpers ==========================================
 
-export function pendingRunSummaryFromRow(
-  row: RunRow | null,
+export function pendingRunSummaryFromResult(
+  result: PendingRunResult | null,
 ): PendingRunSummary | null {
-  if (!row) return null
-  if (row.status !== null) return null
-  if (row.completedAt === null) return null
-  const passed = row.exitCode === 0 && !row.timedOut
+  if (!result) return null
   return {
-    command: row.command,
-    durationSeconds: row.durationMs !== null ? row.durationMs / 1000 : null,
-    parsedAsi: row.parsedAsi,
-    parsedMetrics: row.parsedMetrics,
-    parsedPrimary: row.parsedPrimary,
-    passed,
-    preRunDirtyPaths: row.preRunDirtyPaths,
-    runDirectory: dirname(row.logPath),
-    runNumber: row.id,
-    exitCode: row.exitCode,
-    timedOut: row.timedOut,
+    command: result.command,
+    durationSeconds: result.durationMs !== null ? result.durationMs / 1000 : null,
+    parsedAsi: result.parsedAsi,
+    parsedMetrics: result.parsedMetrics,
+    parsedPrimary: result.parsedPrimary,
+    passed: result.passed,
+    preRunDirtyPaths: result.preRunDirtyPaths,
+    // No per-run directory under the JSONL storage model.
+    runDirectory: '',
+    runNumber: result.runNumber,
+    exitCode: result.exitCode,
+    timedOut: result.timedOut,
   }
 }
 

@@ -35,27 +35,28 @@ Working directory: \`{{working_dir}}\`
 
 ### What you MUST produce
 
-Write \`./autoresearch.sh\` at the working directory. It is the canonical benchmark entrypoint and MUST:
+Write \`./.auto/measure.sh\` at the working directory. It is the canonical benchmark entrypoint and MUST:
 
 - exit 0 on success and non-zero on failure;
 - print the primary metric as a single line \`METRIC <name>=<value>\`;
 - print any secondary metrics as additional \`METRIC <name>=<value>\` lines;
 - run the same workload deterministically every time (no live network, no time-of-day dependencies, fixed seeds where applicable).
 
-You MAY edit anything else needed to make \`autoresearch.sh\` work — benchmark binaries, \`Cargo.toml\`, \`package.json\`, helper scripts, fixtures. All those edits are part of the harness baseline and will be committed for you when you call \`init_experiment\` on an autoresearch branch.
+You MAY edit anything else needed to make \`.auto/measure.sh\` work — benchmark binaries, \`Cargo.toml\`, \`package.json\`, helper scripts, fixtures. All those edits are part of the harness baseline and will be committed for you when you call \`init_experiment\` on an autoresearch branch.
 
 ### Steps
 
 1. Inspect the target. Read source, identify what to measure, decide on the workload.
-2. Write \`autoresearch.sh\` plus any supporting files (benchmark binaries, fixtures, etc.).
-3. Validate it: invoke \`bash autoresearch.sh\` through the regular \`bash\` tool. Confirm it exits 0 and emits at least one \`METRIC\` line. Iterate on the harness until it does.
+2. Write \`.auto/measure.sh\` plus any supporting files (benchmark binaries, fixtures, etc.).
+3. Validate it: invoke \`bash .auto/measure.sh\` through the regular \`bash\` tool. Confirm it exits 0 and emits at least one \`METRIC\` line. Iterate on the harness until it does.
 4. Call \`init_experiment\` with the goal, primary metric (matching the \`METRIC\` name), and scope. This snapshots the worktree as the baseline and starts Phase 2 (the iteration loop).
 
 ### Rules
 
 - NEVER call \`run_experiment\`, \`log_experiment\`, or \`update_notes\` yet. They will error with "no active autoresearch session" until \`init_experiment\` runs.
 - NEVER treat a compile-only check as a benchmark. The harness MUST actually execute the workload and emit \`METRIC\`.
-- NEVER create \`autoresearch.md\`, \`autoresearch.checks.sh\`, \`autoresearch.program.md\`, \`autoresearch.ideas.md\`, \`autoresearch.jsonl\`, \`.autoresearch/\`, or \`autoresearch.config.json\`. Session state is tracked for you.`
+- NEVER create \`.auto/prompt.md\`, \`.auto/measure.sh\` (other than the harness), \`.auto/log.jsonl\`, \`.auto/ideas.md\`, \`.auto/checks.sh\`, \`.auto/config.json\`, or \`.auto/hooks/\`. Session state is tracked for you.
+`
 
 // === prompt.md (Phase 2: iteration loop) ====================================
 export const ITERATION_PROMPT_TEMPLATE = `{{base_system_prompt}}
@@ -71,7 +72,7 @@ Primary goal:
 There is no goal recorded for this session yet. Infer what to optimize from the latest user message and the conversation; capture the goal in your notes (\`update_notes\`) once it is clear.
 {{/if}}
 
-Session state and run artifacts are managed for you. The benchmark entrypoint is \`bash autoresearch.sh\` (committed during Phase 1). NEVER edit \`autoresearch.sh\` mid-segment unless you intentionally bump segment via \`init_experiment new_segment: true\`. NEVER create \`autoresearch.md\` or \`.autoresearch/\` in this repo.
+Session state and run artifacts are managed for you. The benchmark entrypoint is \`bash .auto/measure.sh\` (committed during Phase 1). NEVER edit \`.auto/measure.sh\` mid-segment unless you intentionally bump segment via \`init_experiment new_segment: true\`. NEVER create \`.auto/prompt.md\`, \`.auto/log.jsonl\`, \`.auto/ideas.md\`, or \`.auto/hooks/\` in this repo.
 
 Working directory: \`{{working_dir}}\`
 {{#if has_branch}}Active branch: \`{{branch}}\`{{/if}}
@@ -81,20 +82,20 @@ You are running an autonomous experiment loop. You MUST keep iterating until the
 
 ### Available tools
 - \`init_experiment\` — open or reconfigure the session. Pass \`new_segment: true\` to start a fresh baseline within the current session.
-- \`run_experiment\` — run the benchmark (\`bash autoresearch.sh\`). Output is captured automatically and \`METRIC name=value\` / \`ASI key=value\` lines printed by the harness are parsed back to you. The command is fixed.
-- \`log_experiment\` — record the result. On \`keep\`, modified files are committed for you; on \`discard\`/\`crash\`/\`checks_failed\`, the worktree is reverted. Pass \`flag_runs\` to mark earlier runs as suspect; flagged runs are excluded from baseline and best-metric math.
+- \`run_experiment\` — run the benchmark. With no \`command\` argument it runs \`bash .auto/measure.sh\` (the committed harness); pass an arbitrary \`command\` string to run a different one-off command. Output is captured automatically and \`METRIC name=value\` / \`ASI key=value\` lines printed by the harness are parsed back to you. If \`.auto/checks.sh\` exists, it is run after a passing benchmark and its result is reported.
+- \`log_experiment\` — record the result. On \`keep\`, modified files are committed for you; on \`discard\`/\`crash\`/\`checks_failed\`, the worktree is reverted. Pass \`flag_runs\` to mark earlier runs as suspect; flagged runs are excluded from baseline and best-metric math. \`keep\` is gated on \`.auto/checks.sh\` passing when that script exists.
 - \`update_notes\` — replace the durable session playbook (\`body\`) or append to the ideas backlog (\`append_idea\`). The notes are injected into your system prompt every iteration.
 
 ### Operating protocol
 1. Understand the target before touching code: read source, identify the bottleneck, verify prerequisites and benchmark inputs.
-2. Update goal, scope, or constraints via another \`init_experiment\` call (no segment bump) or \`update_notes\`. Bump segment when you intentionally change \`autoresearch.sh\`.
+2. Update goal, scope, or constraints via another \`init_experiment\` call (no segment bump) or \`update_notes\`. Bump segment when you intentionally change \`.auto/measure.sh\`.
 3. Establish a baseline first.
 4. Iterate: change code, run \`run_experiment\`, log honestly with \`log_experiment\`. One coherent experiment per iteration.
 5. Keep the primary metric as the decision maker:
    - \`keep\` when it improves;
    - \`discard\` when it regresses or stays flat;
    - \`crash\` when the run fails;
-   - \`checks_failed\` when validation fails (you decide what validation means; run it through the regular \`bash\` tool).
+   - \`checks_failed\` when validation fails (\`.auto/checks.sh\` if present, or any validation you run through the regular \`bash\` tool).
 6. Use ASI freely — it is opaque, just stash useful learnings (\`hypothesis\`, \`rollback_reason\`, \`next_action_hint\`, anything else).
 7. When confidence is low, re-run promising changes before keeping them. \`log_experiment\` reports a confidence score (multiples of the observed noise floor) on each kept run.
 

@@ -34,7 +34,6 @@ import { builtInCommandNames } from '../commands.js'
 import { COMMAND_NAME_TAG, TICK_TAG } from '../constants/xml.js'
 import { getFeatureValue_CACHED_MAY_BE_STALE } from '../services/analytics/growthbook.js'
 import * as sessionIngress from '../services/api/sessionIngress.js'
-import { REPL_TOOL_NAME } from '../tools/REPLTool/constants.js'
 import {
   type AgentId,
   asAgentId,
@@ -4592,86 +4591,6 @@ export function isLoggableMessage(m: Message): boolean {
   return true
 }
 
-function collectReplIds(messages: readonly Message[]): Set<string> {
-  const ids = new Set<string>()
-  for (const m of messages) {
-    if (m.type === 'assistant' && Array.isArray(m.message.content)) {
-      for (const b of m.message.content) {
-        if (b.type === 'tool_use' && b.name === REPL_TOOL_NAME) {
-          ids.add(b.id)
-        }
-      }
-    }
-  }
-  return ids
-}
-
-/**
- * For external users, make REPL invisible in the persisted transcript: strip
- * REPL tool_use/tool_result pairs and promote isVirtual messages to real. On
- * --resume the model then sees a coherent native-tool-call history (assistant
- * called Bash, got result, called Read, got result) without the REPL wrapper.
- * Ant transcripts keep the wrapper so /share training data sees REPL usage.
- *
- * replIds is pre-collected from the FULL session array, not the slice being
- * transformed — recordTranscript receives incremental slices where the REPL
- * tool_use (earlier render) and its tool_result (later render, after async
- * execution) land in separate calls. A fresh per-call Set would miss the id
- * and leave an orphaned tool_result on disk.
- */
-function transformMessagesForExternalTranscript(
-  messages: Transcript,
-  replIds: Set<string>,
-): Transcript {
-  return messages.flatMap(m => {
-    if (m.type === 'assistant' && Array.isArray(m.message.content)) {
-      const content = m.message.content
-      const hasRepl = content.some(
-        b => b.type === 'tool_use' && b.name === REPL_TOOL_NAME,
-      )
-      const filtered = hasRepl
-        ? content.filter(
-            b => !(b.type === 'tool_use' && b.name === REPL_TOOL_NAME),
-          )
-        : content
-      if (filtered.length === 0) return []
-      if (m.isVirtual) {
-        const { isVirtual: _omit, ...rest } = m
-        return [{ ...rest, message: { ...m.message, content: filtered } }]
-      }
-      if (filtered !== content) {
-        return [{ ...m, message: { ...m.message, content: filtered } }]
-      }
-      return [m]
-    }
-    if (m.type === 'user' && Array.isArray(m.message.content)) {
-      const content = m.message.content
-      const hasRepl = content.some(
-        b => b.type === 'tool_result' && replIds.has(b.tool_use_id),
-      )
-      const filtered = hasRepl
-        ? content.filter(
-            b => !(b.type === 'tool_result' && replIds.has(b.tool_use_id)),
-          )
-        : content
-      if (filtered.length === 0) return []
-      if (m.isVirtual) {
-        const { isVirtual: _omit, ...rest } = m
-        return [{ ...rest, message: { ...m.message, content: filtered } }]
-      }
-      if (filtered !== content) {
-        return [{ ...m, message: { ...m.message, content: filtered } }]
-      }
-      return [m]
-    }
-    // string-content user, system, attachment
-    if ('isVirtual' in m && m.isVirtual) {
-      const { isVirtual: _omit, ...rest } = m
-      return [rest]
-    }
-    return [m]
-  }) as Transcript
-}
 
 // Cache for cleanMessagesForLogging keyed by the messages array reference.
 // Eliminates O(n) re-filtering when the same array grows via .push() between
@@ -4712,20 +4631,14 @@ export function cleanMessagesForLogging(
   messages: Message[],
   allMessages: readonly Message[] = messages,
 ): Transcript {
-  // Only use the array-growth cache for the ant path (common case) where
-  // allMessages === messages. External-user transforms depend on the full
-  // allMessages array for collectReplIds which needs fresh computation anyway.
-  if (isAntOrNoumena() && allMessages === messages) {
+  // REPL is available in all builds now, so we no longer strip REPL
+  // tool_use/tool_result pairs from external transcripts. The cache is
+  // safe for all callers where allMessages === messages.
+  if (allMessages === messages) {
     return getCleanMessagesForLoggingCached(messages, allMessages)
   }
 
-  const filtered = messages.filter(isLoggableMessage) as Transcript
-  return !isAntOrNoumena()
-    ? transformMessagesForExternalTranscript(
-        filtered,
-        collectReplIds(allMessages),
-      )
-    : filtered
+  return messages.filter(isLoggableMessage) as Transcript
 }
 
 /**

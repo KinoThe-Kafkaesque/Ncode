@@ -1,18 +1,22 @@
 /**
- * update_notes — persist the durable autoresearch playbook on the active session.
+ * update_notes — persist the durable autoresearch playbook to `.auto/prompt.md`
+ * and `.auto/ideas.md`.
  *
  * Ported from oh-my-pi `autoresearch/tools/update-notes.ts` (arktype → zod).
- * `body` replaces the entire notes blob; `append_idea` appends a single bullet
- * under an `## Ideas` section. The notes are re-injected into the iteration
+ * `body` replaces the entire `.auto/prompt.md`; `append_idea` appends a single
+ * bullet to `.auto/ideas.md`. The prompt is re-injected into the iteration
  * prompt every turn.
  */
 
 import * as React from 'react'
+import * as fs from 'node:fs'
 import { z } from 'zod/v4'
 import { isAutoresearchToolAvailable } from '../../autoresearch/index.js'
+import { ensureParentDir, sessionFilePath } from '../../autoresearch/paths.js'
 import { Text } from '../../ink.js'
 import { buildTool, type Tool, type ToolDef } from '../../Tool.js'
-import { NO_SESSION_ERROR, resolveActiveSession } from './shared.js'
+import { getCwd } from '../../utils/cwd.js'
+import { NO_SESSION_ERROR, hasActiveSession } from './shared.js'
 
 const inputSchema = () =>
   z.strictObject({
@@ -34,10 +38,10 @@ export const UpdateNotesTool: Tool<InputSchema, Output> = buildTool({
   searchHint: 'persist the durable autoresearch playbook / ideas backlog',
   maxResultSizeChars: 2_000,
   async description() {
-    return 'Persist the durable autoresearch playbook (goal, scope notes, hypotheses, ideas backlog) on the active session. Pass `body` to replace the entire notes blob, or `append_idea` to append a single bullet under an `## Ideas` section.'
+    return 'Persist the durable autoresearch playbook to `.auto/prompt.md` and `.auto/ideas.md`. Pass `body` to replace the entire prompt file, or `append_idea` to append a single bullet to the ideas file.'
   },
   async prompt() {
-    return 'Persist the durable autoresearch playbook on the active session. `body` replaces the entire notes blob; `append_idea` appends one bullet under `## Ideas`. The notes are injected into your iteration prompt every turn.'
+    return 'Persist the durable autoresearch playbook to `.auto/prompt.md` and `.auto/ideas.md`. `body` replaces the entire prompt file; `append_idea` appends one bullet to `.auto/ideas.md`. The prompt is injected into your iteration prompt every turn.'
   },
   get inputSchema(): InputSchema {
     return inputSchema()
@@ -68,26 +72,26 @@ export const UpdateNotesTool: Tool<InputSchema, Output> = buildTool({
     if (context.agentId) {
       throw new Error('update_notes cannot be used in agent contexts')
     }
-    const { store, session } = await resolveActiveSession()
-    if (!store || !session) {
+    if (!hasActiveSession()) {
       return { data: { text: NO_SESSION_ERROR } }
     }
+    const workDir = getCwd()
 
-    const nextNotes =
-      input.append_idea !== undefined && input.append_idea.trim().length > 0
-        ? appendIdea(session.notes, input.append_idea.trim())
-        : input.body
-
-    await store.updateSession(session.id, { notes: nextNotes })
-
-    return {
-      data: {
-        text:
-          input.append_idea !== undefined
-            ? `Appended idea (${nextNotes.length} chars total).`
-            : `Notes updated (${nextNotes.length} chars).`,
-      },
+    if (input.append_idea !== undefined && input.append_idea.trim().length > 0) {
+      const idea = input.append_idea.trim()
+      const ideasPath = sessionFilePath(workDir, 'ideas')
+      ensureParentDir(ideasPath)
+      if (!fs.existsSync(ideasPath)) {
+        fs.writeFileSync(ideasPath, `${IDEAS_HEADING}\n`)
+      }
+      fs.appendFileSync(ideasPath, `- ${idea}\n`)
+      return { data: { text: `Appended idea to ${ideasPath}.` } }
     }
+
+    const promptPath = sessionFilePath(workDir, 'prompt')
+    ensureParentDir(promptPath)
+    fs.writeFileSync(promptPath, input.body)
+    return { data: { text: `Notes updated (${input.body.length} chars) in ${promptPath}.` } }
   },
   mapToolResultToToolResultBlockParam(output: Output, toolUseID: string) {
     return {
@@ -100,23 +104,3 @@ export const UpdateNotesTool: Tool<InputSchema, Output> = buildTool({
 
 const IDEAS_HEADING = '## Ideas'
 
-function appendIdea(currentNotes: string, idea: string): string {
-  const trimmed = currentNotes.trimEnd()
-  if (trimmed.length === 0) {
-    return `${IDEAS_HEADING}\n- ${idea}\n`
-  }
-  if (trimmed.includes(IDEAS_HEADING)) {
-    const lines = trimmed.split('\n')
-    const ideasIndex = lines.findIndex(line => line.trim() === IDEAS_HEADING)
-    let insertAt = lines.length
-    for (let i = ideasIndex + 1; i < lines.length; i += 1) {
-      if (/^#{1,6}\s/.test(lines[i] ?? '')) {
-        insertAt = i
-        break
-      }
-    }
-    lines.splice(insertAt, 0, `- ${idea}`)
-    return `${lines.join('\n')}\n`
-  }
-  return `${trimmed}\n\n${IDEAS_HEADING}\n- ${idea}\n`
-}

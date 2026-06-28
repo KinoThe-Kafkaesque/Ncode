@@ -11,7 +11,8 @@
  */
 
 import { inferMetricUnitFromName, isBetter } from './helpers.js'
-import type { RunRow, SessionRow } from './storage.js'
+import { readJsonlContent } from './storage.js'
+import { reconstructJsonlState, type ReconstructedJsonlState } from './jsonl.js'
 import type {
   ExperimentResult,
   ExperimentState,
@@ -39,7 +40,6 @@ export function createExperimentState(): ExperimentState {
     notes: '',
     branch: null,
     baselineCommit: null,
-    sessionId: null,
   }
 }
 
@@ -177,45 +177,48 @@ export function computeConfidence(
   return Math.abs(bestKept - baseline) / mad
 }
 
-export function buildExperimentState(
-  session: SessionRow,
-  loggedRuns: RunRow[],
-): ExperimentState {
+export function buildExperimentState(workDir: string): ExperimentState {
   const state = createExperimentState()
-  state.name = session.name
-  state.goal = session.goal
-  state.metricName = session.primaryMetric
-  state.metricUnit = session.metricUnit
-  state.bestDirection = session.direction
-  state.scopePaths = [...session.scopePaths]
-  state.offLimits = [...session.offLimits]
-  state.constraints = [...session.constraints]
-  state.notes = session.notes
-  state.branch = session.branch
-  state.baselineCommit = session.baselineCommit
-  state.sessionId = session.id
-  state.maxExperiments = session.maxIterations
-  state.currentSegment = session.currentSegment
-  state.secondaryMetrics = session.secondaryMetrics.map(name => ({
-    name,
-    unit: inferMetricUnitFromName(name),
+
+  let reconstructed: ReconstructedJsonlState | null = null
+  try {
+    const content = readJsonlContent(workDir)
+    if (content.length > 0) reconstructed = reconstructJsonlState(content)
+  } catch {
+    reconstructed = null
+  }
+  if (!reconstructed) return state
+
+  state.name = reconstructed.name
+  state.goal = reconstructed.goal
+  state.metricName = reconstructed.metricName
+  state.metricUnit = reconstructed.metricUnit
+  state.bestDirection = reconstructed.bestDirection
+  state.scopePaths = [...reconstructed.scopePaths]
+  state.offLimits = [...reconstructed.offLimits]
+  state.constraints = [...reconstructed.constraints]
+  state.maxExperiments = reconstructed.maxIterations
+  state.baselineCommit = reconstructed.baselineCommit
+  state.currentSegment = reconstructed.currentSegment
+  state.secondaryMetrics = reconstructed.secondaryMetrics.map(metric => ({
+    name: metric.name,
+    unit: metric.unit || inferMetricUnitFromName(metric.name),
   }))
 
-  for (const run of loggedRuns) {
-    if (run.status === null) continue
+  for (const run of reconstructed.results) {
     const result: ExperimentResult = {
-      runNumber: run.id,
-      commit: run.commitHash ?? '',
-      metric: run.metric ?? 0,
-      metrics: run.metrics ?? {},
+      runNumber: run.run,
+      commit: run.commit,
+      metric: run.metric,
+      metrics: run.metrics,
       status: run.status,
-      description: run.description ?? '',
-      timestamp: run.loggedAt ?? run.startedAt,
+      description: run.description,
+      timestamp: run.timestamp,
       segment: run.segment,
       confidence: run.confidence,
-      asi: run.asi ?? undefined,
-      modifiedPaths: run.modifiedPaths ?? [],
-      scopeDeviations: run.scopeDeviations ?? [],
+      asi: run.asi,
+      modifiedPaths: run.modifiedPaths,
+      scopeDeviations: run.scopeDeviations,
       justification: run.justification,
       flagged: run.flagged,
       flaggedReason: run.flaggedReason,
