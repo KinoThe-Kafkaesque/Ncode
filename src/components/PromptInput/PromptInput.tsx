@@ -149,6 +149,8 @@ import { resolvePromptInputUndoPlan } from './promptInputUndoPlan.js';
 import { dispatchPromptInputSubmit } from './promptInputSubmitDispatch.js';
 import { isNonSpacePrintable, isVimModeEnabled } from './utils.js';
 import { isInternalBuild } from 'src/capabilities/static.js'
+import { OrchestrationStatusBar } from '../OrchestrationStatusBar.js';
+import { hasOrchestrateKeyword } from '../../utils/orchestrate.js';
 type Props = {
   debug: boolean;
   ideSelection: IDESelection | undefined;
@@ -328,6 +330,7 @@ function PromptInput({
   const store = useAppStateStore();
   const setAppState = useSetAppState();
   const tasks = useAppState(s => s.tasks);
+  const orchestrationActive = useAppState(s => s.orchestrationActive);
   const replBridgeConnected = useAppState(s => s.replBridgeConnected);
   const replBridgeExplicit = useAppState(s => s.replBridgeExplicit);
   const replBridgeReconnecting = useAppState(s => s.replBridgeReconnecting);
@@ -798,6 +801,7 @@ function PromptInput({
   }, []);
   const onSubmit = useCallback(async (inputParam: string, isSubmittingSlashCommand = false) => {
     const state = store.getState();
+    if (hasOrchestrateKeyword(inputParam)) { setAppState(prev => ({ ...prev, orchestrationActive: true })); }
     const hasImages = Object.values(pastedContents).some(c => c.type === 'image');
     await dispatchPromptInputSubmit({
       inputParam,
@@ -855,6 +859,7 @@ function PromptInput({
       onSubmitProp,
     });
   }, [promptSuggestionState, speculation, speculationSessionTimeSavedMs, teamContext, store, footerItems, suggestionsState.suggestions, onSubmitProp, onAgentSubmit, clearBuffer, resetHistory, logOutcomeAtSubmission, setAppState, markAccepted, pastedContents, removeNotification, mode]);
+  useEffect(() => { if (!isLoading && orchestrationActive) { const hasRunningAgents = Object.values(tasks).some(t => t.type === 'local_agent' && t.status === 'running'); if (!hasRunningAgents) { setAppState(prev => ({ ...prev, orchestrationActive: false })); } } }, [isLoading, orchestrationActive, tasks, setAppState]);
   const {
     suggestions,
     selectedSuggestion,
@@ -1708,6 +1713,7 @@ function PromptInput({
           </Box>
         </Box>}
       <PromptInputFooter apiKeyStatus={apiKeyStatus} debug={debug} exitMessage={exitMessage} vimMode={isVimModeEnabled() ? vimMode : undefined} mode={mode} autoUpdaterResult={autoUpdaterResult} isAutoUpdating={isAutoUpdating} verbose={verbose} onAutoUpdaterResult={onAutoUpdaterResult} onChangeIsUpdating={setIsAutoUpdating} suggestions={suggestions} selectedSuggestion={selectedSuggestion} maxColumnWidth={maxColumnWidth} toolPermissionContext={effectiveToolPermissionContext} helpOpen={helpOpen} suppressHint={input.length > 0} isLoading={isLoading} tasksSelected={tasksSelected} teamsSelected={teamsSelected} bridgeSelected={bridgeSelected} tmuxSelected={tmuxSelected} teammateFooterIndex={teammateFooterIndex} ideSelection={ideSelection} mcpClients={mcpClients} isPasting={isPasting} isInputWrapped={isInputWrapped} messagesRef={messagesRef} lastAssistantMessageId={lastAssistantMessageId} lastApiUsageKey={lastApiUsageKey} isSearching={isSearchingHistory} historyQuery={historyQuery} setHistoryQuery={setHistoryQuery} historyFailedMatch={historyFailedMatch} onOpenTasksDialog={isFullscreenEnvEnabled() ? handleOpenTasksDialog : undefined} />
+      <OrchestrationStatusBar />
       {isFullscreenEnvEnabled() ? null : autoModeOptInDialog}
       {isFullscreenEnvEnabled() ?
     // position=absolute takes zero layout height so the spinner
