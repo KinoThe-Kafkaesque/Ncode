@@ -46,6 +46,14 @@ export type BaseTextInputProps = {
   readonly multiline?: boolean
 
   /**
+   * When true, single Enter queues the message (runs after the current
+   * agent turn finishes). Double Enter — pressing Enter twice within
+   * ~300ms — submits immediately (interrupts the current turn). Only
+   * meaningful for the main prompt input when an agent turn is active.
+   */
+  readonly submitOnDoubleEnter?: boolean
+
+  /**
    * Listen to user's input. Useful in case there are multiple input components
    * at the same time and input must be "routed" to a specific component.
    */
@@ -78,8 +86,10 @@ export type BaseTextInputProps = {
 
   /**
    * Function to call when `Enter` is pressed, where first argument is a value of the input.
+   * The optional second argument is an options object. When `skipInterrupt`
+   * is true, the message is queued without aborting the current agent turn.
    */
-  readonly onSubmit?: (value: string) => void
+  readonly onSubmit?: (value: string, options?: { skipInterrupt?: boolean }) => void
 
   /**
    * Function to call when Ctrl+C is pressed to exit.

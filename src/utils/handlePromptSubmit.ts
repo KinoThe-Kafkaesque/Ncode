@@ -110,6 +110,12 @@ export type HandlePromptSubmitParams = BaseExecutionParams & {
   hasInterruptibleToolInProgress?: boolean
   uuid?: UUID
   /**
+   * When true, skip aborting the current turn even if interruptible tools
+   * are in progress. The message is enqueued and runs after the current
+   * turn finishes naturally. Used by single-Enter-queue behavior.
+   */
+  skipInterrupt?: boolean
+  /**
    * When true, input starting with `/` is treated as plain text.
    * Used for remotely-received messages (bridge/CCR) that should not
    * trigger local slash commands or skills.
@@ -141,6 +147,7 @@ export async function handlePromptSubmit(
     queuedCommands,
     uuid,
     skipSlashCommands,
+    skipInterrupt,
   } = params
 
   const { setCursorOffset, clearBuffer, resetHistory } = helpers
@@ -322,7 +329,7 @@ export async function handlePromptSubmit(
 
     // Interrupt the current turn when all executing tools have
     // interruptBehavior 'cancel' (e.g. SleepTool).
-    if (params.hasInterruptibleToolInProgress) {
+    if (params.hasInterruptibleToolInProgress && !params.skipInterrupt) {
       logForDebugging(
         `[interrupt] Aborting current turn: streamMode=${params.streamMode}`,
       )

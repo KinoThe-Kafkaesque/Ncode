@@ -106,6 +106,7 @@ export default function TextInput(props: Props): React.ReactNode {
     focus: props.focus,
     mask: props.mask,
     multiline: props.multiline,
+    submitOnDoubleEnter: props.submitOnDoubleEnter,
     cursorChar: props.showCursor ? ' ' : '',
     highlightPastedText: props.highlightPastedText,
     invert,

@@ -28,6 +28,9 @@ export type DispatchPromptInputSubmitIntentDeps = {
       speculationSessionTimeSavedMs: number
       setAppState: SetAppState
     },
+    options?: {
+      skipInterrupt?: boolean
+    },
   ) => Promise<void>
 }
 

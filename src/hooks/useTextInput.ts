@@ -23,6 +23,7 @@ import { isFullscreenEnvEnabled } from '../utils/fullscreen.js'
 import type { ImageDimensions } from '../utils/imageResizer.js'
 import { isModifierPressed, prewarmModifiers } from '../utils/modifiers.js'
 import { useDoublePress } from './useDoublePress.js'
+import { useEffect, useRef } from 'react'
 
 type MaybeCursor = void | Cursor
 type InputHandler = (input: string) => MaybeCursor
@@ -38,7 +39,7 @@ function mapInput(input_map: Array<[string, InputHandler]>): InputMapper {
 export type UseTextInputProps = {
   value: string
   onChange: (value: string) => void
-  onSubmit?: (value: string) => void
+  onSubmit?: (value: string, options?: { skipInterrupt?: boolean }) => void
   onExit?: () => void
   onExitMessage?: (show: boolean, key?: string) => void
   onHistoryUp?: () => void
@@ -48,6 +49,7 @@ export type UseTextInputProps = {
   focus?: boolean
   mask?: string
   multiline?: boolean
+  submitOnDoubleEnter?: boolean
   cursorChar: string
   highlightPastedText?: boolean
   invert: (text: string) => string
@@ -82,6 +84,7 @@ export function useTextInput({
   onClearInput,
   mask = '',
   multiline = false,
+  submitOnDoubleEnter = false,
   cursorChar,
   invert,
   columns,
@@ -244,6 +247,18 @@ export function useTextInput({
     ['y', handleYankPop],
   ])
 
+  // Double-enter detection: when submitOnDoubleEnter is active, the first
+  // Enter queues the message (skipInterrupt=true). A second Enter within
+  // DOUBLE_ENTER_TIMEOUT_MS submits immediately (skipInterrupt=false,
+  // interrupting the current turn). If no second Enter arrives, the timer
+  // fires and the queued submit proceeds.
+  const DOUBLE_ENTER_TIMEOUT_MS = 300
+  const pendingEnterRef = useRef<{ value: string; timer: NodeJS.Timeout } | null>(null)
+  // Clear any pending enter timer on unmount
+  useEffect(() => () => {
+    if (pendingEnterRef.current) clearTimeout(pendingEnterRef.current.timer)
+  }, [])
+
   function handleEnter(key: Key) {
     if (
       multiline &&
@@ -262,6 +277,27 @@ export function useTextInput({
     // so we use native macOS modifier detection to check if Shift is held
     if (env.terminal === 'Apple_Terminal' && isModifierPressed('shift')) {
       return cursor.insert('\n')
+    }
+    if (submitOnDoubleEnter) {
+      // Second Enter within the timeout — submit immediately (interrupt)
+      if (pendingEnterRef.current) {
+        clearTimeout(pendingEnterRef.current.timer)
+        const value = pendingEnterRef.current.value
+        pendingEnterRef.current = null
+        onSubmit?.(value, { skipInterrupt: false })
+        return
+      }
+      // First Enter — start a short timer. If no second Enter arrives,
+      // submit with skipInterrupt=true (queue after current turn).
+      const value = originalValue
+      pendingEnterRef.current = {
+        value,
+        timer: setTimeout(() => {
+          pendingEnterRef.current = null
+          onSubmit?.(value, { skipInterrupt: true })
+        }, DOUBLE_ENTER_TIMEOUT_MS),
+      }
+      return
     }
     onSubmit?.(originalValue)
   }

@@ -2887,6 +2887,7 @@ export function REPL({
     setAppState: SetAppState;
   }, options?: {
     fromKeybinding?: boolean;
+    skipInterrupt?: boolean;
   }) => {
     // Re-pin scroll to bottom on submit so the user always sees the new
     // exchange (matches OpenCode's auto-scroll behavior).
@@ -2901,6 +2902,7 @@ export function REPL({
     await dispatchReplSubmit({
       input,
       helpers,
+      skipInterrupt: options?.skipInterrupt,
       speculationAccept,
       fromKeybinding,
       inputMode: inputModeRef.current,

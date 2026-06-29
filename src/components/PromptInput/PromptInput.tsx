@@ -201,6 +201,7 @@ type Props = {
     setAppState: (f: (prev: AppState) => AppState) => void;
   }, options?: {
     fromKeybinding?: boolean;
+    skipInterrupt?: boolean;
   }) => Promise<void>;
   onAgentSubmit?: (input: string, task: InProcessTeammateTaskState | LocalAgentTaskState, helpers: PromptInputHelpers) => Promise<void>;
   isSearchingHistory: boolean;
@@ -799,7 +800,9 @@ function PromptInput({
   const setSuggestionsState = useCallback((updater: typeof suggestionsState | ((prev: typeof suggestionsState) => typeof suggestionsState)) => {
     setSuggestionsStateRaw(prev => typeof updater === 'function' ? updater(prev) : updater);
   }, []);
-  const onSubmit = useCallback(async (inputParam: string, isSubmittingSlashCommand = false) => {
+  const onSubmit = useCallback(async (inputParam: string, options?: { skipInterrupt?: boolean; isSubmittingSlashCommand?: boolean }) => {
+    const isSubmittingSlashCommand = options?.isSubmittingSlashCommand ?? false;
+    const skipInterrupt = options?.skipInterrupt ?? false;
     const state = store.getState();
     if (hasOrchestrateKeyword(inputParam)) { setAppState(prev => ({ ...prev, orchestrationActive: true })); }
     const hasImages = Object.values(pastedContents).some(c => c.type === 'image');
@@ -828,6 +831,7 @@ function PromptInput({
       swarmsEnabled: isAgentSwarmsEnabled(),
       teamContext,
       activeAgent: getActiveAgentForInput(state),
+      skipInterrupt,
     }, {
       submitIntentDeps: {
         markAccepted,
@@ -1612,6 +1616,7 @@ function PromptInput({
   }
   const baseProps: BaseTextInputProps = {
     multiline: true,
+    submitOnDoubleEnter: isLoading,
     onSubmit,
     onChange,
     value: historyMatch ? getValueFromInput(typeof historyMatch === 'string' ? historyMatch : historyMatch.display) : input,

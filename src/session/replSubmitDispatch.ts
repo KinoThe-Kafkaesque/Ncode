@@ -66,6 +66,7 @@ export type DispatchReplSubmitOptions = {
   streamMode: SpinnerMode
   hasInterruptibleToolInProgress: boolean
   querySource: HandlePromptSubmitParams['querySource']
+  skipInterrupt?: boolean
   nowProvider?: () => number
 }
 
@@ -165,6 +166,7 @@ export async function dispatchReplSubmit(
     streamMode,
     hasInterruptibleToolInProgress,
     querySource,
+    skipInterrupt,
     nowProvider = Date.now,
   }: DispatchReplSubmitOptions,
   {
@@ -290,6 +292,7 @@ export async function dispatchReplSubmit(
       isSlashCommand: submitState.isSlashCommand,
       matchedCommandType: matchingSubmitCommand?.type,
       querySource,
+      skipInterrupt,
     },
     postBookkeepingDeps,
   )

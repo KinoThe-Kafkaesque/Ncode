@@ -42,6 +42,7 @@ export type DispatchReplPostBookkeepingSubmitOptions = {
   isSlashCommand: boolean
   matchedCommandType?: string
   querySource: HandlePromptSubmitParams['querySource']
+  skipInterrupt?: boolean
 }
 
 export type DispatchReplPostBookkeepingSubmitDeps = {
@@ -91,6 +92,7 @@ export async function dispatchReplPostBookkeepingSubmit(
     isSlashCommand,
     matchedCommandType,
     querySource,
+    skipInterrupt,
   }: DispatchReplPostBookkeepingSubmitOptions,
   {
     awaitPendingHooks,
@@ -175,6 +177,7 @@ export async function dispatchReplPostBookkeepingSubmit(
           setMessages,
           streamMode,
           hasInterruptibleToolInProgress,
+          skipInterrupt,
         },
         restoreDeferredStash,
       },

@@ -33,6 +33,7 @@ import {
 const DEFAULT_TIMEOUT_MS = 30_000
 const MAX_TIMEOUT_MS = 120_000
 const PARALLEL_CONCURRENCY = 8
+const PREVIEW_LIMIT = 20_000
 
 async function runParallel<T>(
   thunks: Array<() => Promise<T> | T>,

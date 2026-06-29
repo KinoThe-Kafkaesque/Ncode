@@ -36,6 +36,7 @@ export type DispatchPromptInputSubmitOptions = {
   swarmsEnabled: boolean
   teamContext: DispatchPromptInputDirectMessageShortcutOptions['teamContext']
   activeAgent: DispatchPromptInputAgentRouteOptions['activeAgent']
+  skipInterrupt?: boolean
 }
 
 export type DispatchPromptInputSubmitDeps = {
@@ -69,6 +70,7 @@ export async function dispatchPromptInputSubmit(
     swarmsEnabled,
     teamContext,
     activeAgent,
+    skipInterrupt,
   }: DispatchPromptInputSubmitOptions,
   {
     submitIntentDeps,
@@ -147,6 +149,5 @@ export async function dispatchPromptInputSubmit(
   ) {
     return
   }
-
-  await onSubmitProp(nextInput, helpers)
+  await onSubmitProp(nextInput, helpers, undefined, { skipInterrupt })
 }
